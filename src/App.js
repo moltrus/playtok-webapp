@@ -1,25 +1,44 @@
-import logo from './logo.svg';
+import React, { useState, useCallback } from 'react';
 import './App.css';
+import { GameProvider, useGame } from './context/GameContext';
+import GameFeed from './components/GameFeed';
+import GamePlayer from './components/GamePlayer';
+import CoinBar from './components/CoinBar';
 
-function App() {
+function AppShell() {
+  const [activeGame, setActiveGame] = useState(null);
+  const { playGame, addCoinsPurchase } = useGame();
+
+  const enterGame = useCallback((id) => {
+    console.log('Attempting to enter game:', id);
+    const ok = playGame(id);
+    console.log('playGame result:', ok);
+    if (ok) {
+      setActiveGame(id);
+      console.log('Active game set to:', id);
+    } else {
+      console.log('Failed to start game:', id);
+    }
+  }, [playGame]);
+
+  const exitGame = useCallback(() => setActiveGame(null), []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app-root">
+      <CoinBar onPurchase={addCoinsPurchase} />
+      {activeGame ? (
+        <GamePlayer gameId={activeGame} onExit={exitGame} />
+      ) : (
+        <GameFeed onEnterGame={enterGame} />
+      )}
     </div>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <GameProvider>
+      <AppShell />
+    </GameProvider>
+  );
+}

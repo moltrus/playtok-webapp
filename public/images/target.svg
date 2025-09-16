@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
+  <!-- Target for quick tap game -->
+  <circle cx="25" cy="25" r="24" fill="#FF6B6B"/>
+  <circle cx="25" cy="25" r="20" fill="#FFFFFF"/>
+  <circle cx="25" cy="25" r="16" fill="#FF6B6B"/>
+  <circle cx="25" cy="25" r="12" fill="#FFFFFF"/>
+  <circle cx="25" cy="25" r="8" fill="#FF6B6B"/>
+  <circle cx="25" cy="25" r="4" fill="#FFD700"/>
+  <!-- Center dot -->
+  <circle cx="25" cy="25" r="1" fill="#333"/>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="40" viewBox="0 0 120 40">
+  <!-- Stack Tower block -->
+  <rect width="120" height="40" fill="#4ECDC4"/>
+  <!-- Block highlight -->
+  <rect x="2" y="2" width="116" height="18" fill="#6FD4C8"/>
+  <!-- Block shadow -->
+  <rect x="2" y="22" width="116" height="16" fill="#3BB8A8"/>
+  <!-- Side pattern -->
+  <rect x="0" y="0" width="4" height="40" fill="#2A9D8F"/>
+  <rect x="116" y="0" width="4" height="40" fill="#2A9D8F"/>
+  <!-- Brick lines -->
+  <line x1="30" y1="0" x2="30" y2="40" stroke="#3BB8A8" stroke-width="1"/>
+  <line x1="60" y1="0" x2="60" y2="40" stroke="#3BB8A8" stroke-width="1"/>
+  <line x1="90" y1="0" x2="90" y2="40" stroke="#3BB8A8" stroke-width="1"/>
+</svg>

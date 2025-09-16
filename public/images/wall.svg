@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <!-- Maze wall -->
+  <rect width="40" height="40" fill="#2C3E50"/>
+  <!-- Brick pattern -->
+  <rect x="2" y="2" width="36" height="8" fill="#34495E"/>
+  <rect x="2" y="12" width="16" height="8" fill="#34495E"/>
+  <rect x="22" y="12" width="16" height="8" fill="#34495E"/>
+  <rect x="2" y="22" width="36" height="8" fill="#34495E"/>
+  <rect x="2" y="32" width="36" height="6" fill="#34495E"/>
+  <!-- Mortar lines -->
+  <line x1="0" y1="10" x2="40" y2="10" stroke="#1A252F" stroke-width="1"/>
+  <line x1="0" y1="20" x2="40" y2="20" stroke="#1A252F" stroke-width="1"/>
+  <line x1="0" y1="30" x2="40" y2="30" stroke="#1A252F" stroke-width="1"/>
+  <line x1="18" y1="12" x2="18" y2="20" stroke="#1A252F" stroke-width="1"/>
+</svg>

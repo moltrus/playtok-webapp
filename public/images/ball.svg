@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
+  <!-- Game ball -->
+  <circle cx="15" cy="15" r="14" fill="#FFD700"/>
+  <!-- Ball highlight -->
+  <ellipse cx="11" cy="9" rx="4" ry="6" fill="#FFFF80" opacity="0.7"/>
+  <!-- Shine spot -->
+  <circle cx="10" cy="8" r="2" fill="#FFFFFF" opacity="0.9"/>
+  <!-- Shadow -->
+  <ellipse cx="18" cy="20" rx="3" ry="2" fill="#DAA520" opacity="0.5"/>
+</svg>

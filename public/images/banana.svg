@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="32" viewBox="0 0 24 32">
+  <!-- Banana fruit -->
+  <path d="M8 4 Q10 2 12 4 Q14 6 12 8 L10 12 Q9 16 10 20 Q11 24 10 28 Q8 30 6 28 Q4 26 6 24 L8 20 Q7 16 8 12 L10 8 Q8 6 8 4 Z" fill="#FFFF00"/>
+  <!-- Banana curve highlight -->
+  <path d="M9 6 Q10 4 11 6 L9 10 Q8 14 9 18 Q10 22 9 26 Q8 28 7 26 L8 22 Q7 18 8 14 L9 10 Q8 8 9 6 Z" fill="#FFFF80" opacity="0.8"/>
+  <!-- Brown spots -->
+  <ellipse cx="9" cy="12" rx="0.8" ry="0.4" fill="#8B4513" opacity="0.6"/>
+  <ellipse cx="8" cy="20" rx="0.6" ry="0.3" fill="#8B4513" opacity="0.6"/>
+  <!-- Top stem -->
+  <rect x="11" y="2" width="2" height="3" fill="#8B4513" rx="1"/>
+</svg>

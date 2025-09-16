@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60">
+  <!-- Bubble for Bubble Pop -->
+  <circle cx="30" cy="30" r="28" fill="#4ECDC4" opacity="0.8"/>
+  <!-- Bubble highlight -->
+  <circle cx="25" cy="22" r="8" fill="#ffffff" opacity="0.4"/>
+  <!-- Bubble reflection -->
+  <circle cx="22" cy="20" r="3" fill="#ffffff" opacity="0.8"/>
+  <!-- Bubble shadow -->
+  <ellipse cx="35" cy="38" rx="5" ry="3" fill="#3BB8A8" opacity="0.3"/>
+</svg>

@@ -1,0 +1,518 @@
+{
+  "games": [
+    {
+      "id": "tap-to-jump",
+      "name": "Tap to Jump",
+      "creator": {
+        "username": "@RunnerKid",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23ff6b6b'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3ER%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 12310,
+        "likes": 4230,
+        "timePlayed": 84,
+        "shares": 890
+      },
+      "lastUpdated": null,
+      "leaderboard": [
+        { "name": "SpeedRunner", "score": 1247 },
+        { "name": "JumpMaster", "score": 1156 },
+        { "name": "QuickFeet", "score": 1089 },
+        { "name": "RunnerPro", "score": 987 },
+        { "name": "FastJump", "score": 923 }
+      ]
+    },
+    {
+      "id": "ball-bounce",
+      "name": "Ball Bounce",
+      "creator": {
+        "username": "@BouncePro",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%234ecdc4'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3EB%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 8120,
+        "likes": 2130,
+        "timePlayed": 51,
+        "shares": 320
+      },
+      "lastUpdated": null,
+      "leaderboard": [
+        { "name": "BallMaster", "score": 2341 },
+        { "name": "BounceKing", "score": 2156 },
+        { "name": "PaddlePro", "score": 1987 },
+        { "name": "BounceBoss", "score": 1834 },
+        { "name": "BallBouncer", "score": 1721 }
+      ]
+    },
+    {
+      "id": "fruit-slice",
+      "name": "Fruit Slice",
+      "creator": {
+        "username": "@FruitNinjaClone",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23ff9500'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3EF%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 15400,
+        "likes": 5220,
+        "timePlayed": 120,
+        "shares": 980
+      },
+      "lastUpdated": null,
+      "leaderboard": [
+        { "name": "SliceMaster", "score": 3452 },
+        { "name": "FruitNinja", "score": 3201 },
+        { "name": "SlashPro", "score": 2987 },
+        { "name": "BladeRunner", "score": 2834 },
+        { "name": "FruitSlicer", "score": 2721 }
+      ]
+    },
+    {
+      "id": "memory-flip",
+      "name": "Memory Flip",
+      "creator": {
+        "username": "@BrainTeaser",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%239c88ff'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3EM%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 7560,
+        "likes": 1980,
+        "timePlayed": 48,
+        "shares": 250
+      },
+      "lastUpdated": null,
+      "leaderboard": [
+        { "name": "MemoryKing", "score": 1856 },
+        { "name": "FlipMaster", "score": 1743 },
+        { "name": "BrainPower", "score": 1672 },
+        { "name": "CardPro", "score": 1598 },
+        { "name": "MemoryPro", "score": 1534 }
+      ]
+    },
+    {
+      "id": "quick-tap",
+      "name": "Quick Tap",
+      "creator": {
+        "username": "@FastFingers",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23ffeb3b'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='black' font-size='16' font-weight='bold'%3EQ%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 10340,
+        "likes": 3410,
+        "timePlayed": 69,
+        "shares": 540
+      },
+      "lastUpdated": null,
+      "leaderboard": [
+        { "name": "LightningTap", "score": 2987 },
+        { "name": "QuickFinger", "score": 2834 },
+        { "name": "SpeedTap", "score": 2721 },
+        { "name": "RapidFire", "score": 2658 },
+        { "name": "FastTap", "score": 2534 }
+      ]
+    },
+    {
+      "id": "stack-tower",
+      "name": "Stack Tower",
+      "creator": {
+        "username": "@TowerKing",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%238bc34a'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3ES%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 14230,
+        "likes": 4890,
+        "timePlayed": 111,
+        "shares": 760
+      },
+      "lastUpdated": null,
+      "leaderboard": [
+        { "name": "StackMaster", "score": 4521 },
+        { "name": "TowerPro", "score": 4234 },
+        { "name": "BlockKing", "score": 3987 },
+        { "name": "StackHero", "score": 3821 },
+        { "name": "BuilderPro", "score": 3654 }
+      ]
+    },
+    {
+      "id": "dodge-game",
+      "name": "Dodge Game",
+      "creator": {
+        "username": "@Dodger",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23e91e63'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3ED%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 9110,
+        "likes": 2700,
+        "timePlayed": 62,
+        "shares": 410
+      },
+      "lastUpdated": null,
+      "leaderboard": [
+        { "name": "DodgeMaster", "score": 3421 },
+        { "name": "EvasionPro", "score": 3156 },
+        { "name": "QuickDodge", "score": 2987 },
+        { "name": "AvoidKing", "score": 2834 },
+        { "name": "DodgeHero", "score": 2721 }
+      ]
+    },
+    {
+      "id": "maze-escape",
+      "name": "Maze Escape",
+      "creator": {
+        "username": "@EscapeMaster",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%2303a9f4'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3EE%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 6890,
+        "likes": 1560,
+        "timePlayed": 38,
+        "shares": 190
+      },
+      "lastUpdated": null,
+      "leaderboard": [
+        { "name": "MazeMaster", "score": 1987 },
+        { "name": "EscapeKing", "score": 1834 },
+        { "name": "PathFinder", "score": 1721 },
+        { "name": "MazeRunner", "score": 1658 },
+        { "name": "ExitPro", "score": 1534 }
+      ]
+    },
+    {
+      "id": "bubble-pop",
+      "name": "Bubble Pop",
+      "creator": {
+        "username": "@BubbleFan",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%2300bcd4'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3EP%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 11430,
+        "likes": 3890,
+        "timePlayed": 75,
+        "shares": 670
+      },
+      "lastUpdated": null,
+      "leaderboard": [
+        { "name": "BubblePro", "score": 2987 },
+        { "name": "PopMaster", "score": 2834 },
+        { "name": "BubbleKing", "score": 2721 },
+        { "name": "PopHero", "score": 2658 },
+        { "name": "BubblePopper", "score": 2534 }
+      ]
+    },
+    {
+      "id": "quiz-blitz",
+      "name": "Quiz Blitz",
+      "creator": {
+        "username": "@QuizBot",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23795548'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3EQ%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 5120,
+        "likes": 1230,
+        "timePlayed": 27,
+        "shares": 120
+      },
+      "lastUpdated": null,
+      "leaderboard": [
+        { "name": "QuizMaster", "score": 1987 },
+        { "name": "BrainPower", "score": 1834 },
+        { "name": "KnowledgeKing", "score": 1721 },
+        { "name": "QuizPro", "score": 1658 },
+        { "name": "TriviaBoss", "score": 1534 }
+      ]
+    },
+    {
+      "id": "color-match-tap",
+      "name": "Color Match Tap",
+      "creator": {
+        "username": "@ColorGuru",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23ff5722'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3EC%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 4320,
+        "likes": 1230,
+        "timePlayed": 56,
+        "shares": 210
+      },
+      "lastUpdated": "2025-09-13",
+      "leaderboard": [
+        { "name": "ColorMaster", "score": 1987 },
+        { "name": "TapPro", "score": 1834 },
+        { "name": "QuickTap", "score": 1721 },
+        { "name": "ColorKing", "score": 1658 },
+        { "name": "TapHero", "score": 1534 }
+      ]
+    },
+    {
+      "id": "sky-drop",
+      "name": "Sky Drop",
+      "creator": {
+        "username": "@SkyDiver",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%2300bcd4'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3ES%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 5120,
+        "likes": 1430,
+        "timePlayed": 62,
+        "shares": 310
+      },
+      "lastUpdated": "2025-09-13",
+      "leaderboard": [
+        { "name": "SkyMaster", "score": 2341 },
+        { "name": "DropPro", "score": 2156 },
+        { "name": "FreeFall", "score": 1987 },
+        { "name": "SkyHero", "score": 1834 },
+        { "name": "CloudRunner", "score": 1721 }
+      ]
+    },
+    {
+      "id": "shape-builder",
+      "name": "Shape Builder",
+      "creator": {
+        "username": "@ShapeMaster",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%239c27b0'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3ES%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 3890,
+        "likes": 980,
+        "timePlayed": 48,
+        "shares": 150
+      },
+      "lastUpdated": "2025-09-13",
+      "leaderboard": [
+        { "name": "ShapeGuru", "score": 1856 },
+        { "name": "BuilderPro", "score": 1743 },
+        { "name": "ShapeHero", "score": 1672 },
+        { "name": "SnapFit", "score": 1598 },
+        { "name": "ShapeKing", "score": 1534 }
+      ]
+    },
+    {
+      "id": "tap-dash",
+      "name": "Tap Dash",
+      "creator": {
+        "username": "@DashPro",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23ff9800'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3ET%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 4780,
+        "likes": 1120,
+        "timePlayed": 53,
+        "shares": 190
+      },
+      "lastUpdated": "2025-09-13",
+      "leaderboard": [
+        { "name": "DashMaster", "score": 1987 },
+        { "name": "QuickTurn", "score": 1834 },
+        { "name": "TapRunner", "score": 1721 },
+        { "name": "DashHero", "score": 1658 },
+        { "name": "TurnPro", "score": 1534 }
+      ]
+    },
+    {
+      "id": "balloon-pop-frenzy",
+      "name": "Balloon Pop Frenzy",
+      "creator": {
+        "username": "@BalloonFan",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23e91e63'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3EB%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 5210,
+        "likes": 1340,
+        "timePlayed": 61,
+        "shares": 230
+      },
+      "lastUpdated": "2025-09-13",
+      "leaderboard": [
+        { "name": "BalloonMaster", "score": 2341 },
+        { "name": "PopPro", "score": 2156 },
+        { "name": "FrenzyKing", "score": 1987 },
+        { "name": "BalloonHero", "score": 1834 },
+        { "name": "PopGuru", "score": 1721 }
+      ]
+    },
+    {
+      "id": "tilt-maze",
+      "name": "Tilt Maze",
+      "creator": {
+        "username": "@MazeRunner",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%2303a9f4'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3ET%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 4320,
+        "likes": 1230,
+        "timePlayed": 56,
+        "shares": 210
+      },
+      "lastUpdated": "2025-09-13",
+      "leaderboard": [
+        { "name": "MazeMaster", "score": 1987 },
+        { "name": "TiltPro", "score": 1834 },
+        { "name": "PathFinder", "score": 1721 },
+        { "name": "MazeHero", "score": 1658 },
+        { "name": "ExitGuru", "score": 1534 }
+      ]
+    },
+    {
+      "id": "reaction-arrows",
+      "name": "Reaction Arrows",
+      "creator": {
+        "username": "@ArrowMaster",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23ffeb3b'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='black' font-size='16' font-weight='bold'%3ER%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 3890,
+        "likes": 980,
+        "timePlayed": 48,
+        "shares": 150
+      },
+      "lastUpdated": "2025-09-13",
+      "leaderboard": [
+        { "name": "ArrowGuru", "score": 1856 },
+        { "name": "SwipePro", "score": 1743 },
+        { "name": "QuickSwipe", "score": 1672 },
+        { "name": "ArrowHero", "score": 1598 },
+        { "name": "DirectionKing", "score": 1534 }
+      ]
+    },
+    {
+      "id": "stack-cups",
+      "name": "Stack Cups",
+      "creator": {
+        "username": "@CupStacker",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%238bc34a'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3ES%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 4780,
+        "likes": 1120,
+        "timePlayed": 53,
+        "shares": 190
+      },
+      "lastUpdated": "2025-09-13",
+      "leaderboard": [
+        { "name": "CupMaster", "score": 1987 },
+        { "name": "StackPro", "score": 1834 },
+        { "name": "QuickStack", "score": 1721 },
+        { "name": "CupHero", "score": 1658 },
+        { "name": "StackGuru", "score": 1534 }
+      ]
+    },
+    {
+      "id": "shadow-match",
+      "name": "Shadow Match",
+      "creator": {
+        "username": "@ShadowGuru",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%239c88ff'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3ES%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 5210,
+        "likes": 1340,
+        "timePlayed": 61,
+        "shares": 230
+      },
+      "lastUpdated": "2025-09-13",
+      "leaderboard": [
+        { "name": "ShadowMaster", "score": 2341 },
+        { "name": "MatchPro", "score": 2156 },
+        { "name": "SilhouetteKing", "score": 1987 },
+        { "name": "ShadowHero", "score": 1834 },
+        { "name": "MatchGuru", "score": 1721 }
+      ]
+    },
+    {
+      "id": "speed-tap-numbers",
+      "name": "Speed Tap Numbers",
+      "creator": {
+        "username": "@NumberTapper",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23ff5722'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3ES%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 0,
+        "likes": 0,
+        "timePlayed": 0,
+        "shares": 0
+      },
+      "lastUpdated": null,
+      "leaderboard": []
+    },
+    {
+      "id": "lane-switcher",
+      "name": "Lane Switcher",
+      "creator": {
+        "username": "@LaneMaster",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23e91e63'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3EL%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 0,
+        "likes": 0,
+        "timePlayed": 0,
+        "shares": 0
+      },
+      "lastUpdated": null,
+      "leaderboard": []
+    },
+    {
+      "id": "tap-timer",
+      "name": "Tap Timer",
+      "creator": {
+        "username": "@TimerTapper",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23ffeb3b'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='black' font-size='16' font-weight='bold'%3ET%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 0,
+        "likes": 0,
+        "timePlayed": 0,
+        "shares": 0
+      },
+      "lastUpdated": null,
+      "leaderboard": []
+    },
+    {
+      "id": "whack-a-mole",
+      "name": "Whack-a-Mole",
+      "creator": {
+        "username": "@MoleWhacker",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%239c27b0'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3EW%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 0,
+        "likes": 0,
+        "timePlayed": 0,
+        "shares": 0
+      },
+      "lastUpdated": null,
+      "leaderboard": []
+    },
+    {
+      "id": "color-sequence",
+      "name": "Color Sequence",
+      "creator": {
+        "username": "@SequenceMaster",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23ff5722'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3EC%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 0,
+        "likes": 0,
+        "timePlayed": 0,
+        "shares": 0
+      },
+      "lastUpdated": null,
+      "leaderboard": []
+    },
+    {
+      "id": "tap-the-odd",
+      "name": "Tap the Odd",
+      "creator": {
+        "username": "@OddTapper",
+        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23e91e63'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3ET%3C/text%3E%3C/svg%3E"
+      },
+      "baseStats": {
+        "plays": 0,
+        "likes": 0,
+        "timePlayed": 0,
+        "shares": 0
+      },
+      "lastUpdated": null,
+      "leaderboard": []
+    }
+  ]
+}
