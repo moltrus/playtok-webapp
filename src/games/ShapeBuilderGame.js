@@ -12,9 +12,17 @@ export class ShapeBuilderGame extends BaseGame {
         this.handleMouseMove = this.handleMouseMove.bind(this);
         this.handleMouseUp = this.handleMouseUp.bind(this);
         
-        // Store dimensions safely
-        this._width = canvas.width || 320;
-        this._height = canvas.height || 480;
+        // Store dimensions and handle high DPI displays
+        const dpr = window.devicePixelRatio || 1;
+        this._width = (canvas.width || 320) / dpr;
+        this._height = (canvas.height || 480) / dpr;
+        
+        // Set canvas dimensions properly
+        canvas.style.width = this._width + 'px';
+        canvas.style.height = this._height + 'px';
+        canvas.width = this._width * dpr;
+        canvas.height = this._height * dpr;
+        context.scale(dpr, dpr);
         
         // Game setup
         this.shapes = [];
@@ -99,8 +107,8 @@ export class ShapeBuilderGame extends BaseGame {
         const canvasHeight = this.canvasHeight;
         console.log(`Canvas dimensions for level: ${canvasWidth}x${canvasHeight}`);
         
-        // Dimensions for shapes and layout - improved size calculation
-        const padding = Math.max(10, Math.min(30, canvasWidth * 0.05));
+        // Use percentage-based padding for better responsiveness
+        const padding = canvasWidth * 0.1; // 10% of canvas width
         
         // Make outlines larger for better visibility and interaction
         let outlineSize;
@@ -133,8 +141,11 @@ export class ShapeBuilderGame extends BaseGame {
         
         // Create target outlines at the bottom of the screen
         for (let i = 0; i < this.totalShapes; i++) {
-            const x = padding + i * (outlineSize + gapBetweenOutlines);
-            const y = canvasHeight - padding - outlineSize - 80; // Move up slightly more
+            // Calculate x position to center the shapes horizontally
+            const totalWidth = (this.totalShapes * outlineSize) + ((this.totalShapes - 1) * gapBetweenOutlines);
+            const startX = (canvasWidth - totalWidth) / 2;
+            const x = startX + i * (outlineSize + gapBetweenOutlines);
+            const y = canvasHeight * 0.7; // Position at 70% of canvas height
             
             // Choose a random shape type for this outline
             const shapeType = this.shapeTypes[Math.floor(Math.random() * this.shapeTypes.length)];
@@ -166,8 +177,11 @@ export class ShapeBuilderGame extends BaseGame {
             const outlineIndex = shapeIndices[i];
             const shapeType = this.targetOutlines[outlineIndex].type;
             
-            const x = padding + i * (outlineSize + gapBetweenOutlines);
-            const y = padding + 80; // Move down slightly more
+            // Calculate x position to center the shapes horizontally
+            const totalWidth = (this.totalShapes * outlineSize) + ((this.totalShapes - 1) * gapBetweenOutlines);
+            const startX = (canvasWidth - totalWidth) / 2;
+            const x = startX + i * (outlineSize + gapBetweenOutlines);
+            const y = canvasHeight * 0.2; // Position at 20% of canvas height
             
             const shape = {
                 x: x,
@@ -231,12 +245,12 @@ export class ShapeBuilderGame extends BaseGame {
         for (const outline of this.targetOutlines) {
             // Draw dashed outline with improved visibility
             this.ctx.strokeStyle = outline.matched ? '#00C000' : '#000000';
-            this.ctx.lineWidth = 4; // Increased from 2 to 4
-            this.ctx.setLineDash(outline.matched ? [] : [8, 8]);
+            this.ctx.lineWidth = 6; // Increased thickness for better visibility
+            this.ctx.setLineDash(outline.matched ? [] : [12, 8]);
             
             // Add background to make outlines more visible
             if (!outline.matched) {
-                this.ctx.fillStyle = 'rgba(200, 200, 200, 0.3)';
+                this.ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
                 this.ctx.fillRect(outline.x, outline.y, outline.width, outline.height);
             }
             
@@ -255,7 +269,13 @@ export class ShapeBuilderGame extends BaseGame {
             // Draw filled shape with improved visibility
             this.ctx.fillStyle = shape.color;
             this.ctx.strokeStyle = '#000000';
-            this.ctx.lineWidth = 3; // Increased from 2 to 3
+            this.ctx.lineWidth = 4;
+            
+            // Add shadow for depth
+            this.ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+            this.ctx.shadowBlur = 5;
+            this.ctx.shadowOffsetX = 2;
+            this.ctx.shadowOffsetY = 2;
             
             this.drawShape(shape.type, shape.x, shape.y, shape.width, shape.height, false);
         }
@@ -678,18 +698,19 @@ export class ShapeBuilderGame extends BaseGame {
             return { x: 0, y: 0 };
         }
         
-        const scaleX = this.canvasWidth / rect.width;
-        const scaleY = this.canvasHeight / rect.height;
+        // Use rect dimensions directly to get the proper scale
+        const touchX = (touch.clientX - rect.left) * (this.canvas.width / rect.width);
+        const touchY = (touch.clientY - rect.top) * (this.canvas.height / rect.height);
         
-        const touchX = (touch.clientX - rect.left) * scaleX;
-        const touchY = (touch.clientY - rect.top) * scaleY;
+        // Adjust for device pixel ratio
+        const dpr = window.devicePixelRatio || 1;
         
         console.log(`Touch position: screen(${touch.clientX}, ${touch.clientY}), canvas(${touchX.toFixed(1)}, ${touchY.toFixed(1)})`);
-        console.log(`Canvas rect: ${rect.width}x${rect.height}, scale: ${scaleX.toFixed(2)}x${scaleY.toFixed(2)}`);
+        console.log(`Canvas rect: ${rect.width}x${rect.height}, DPR: ${dpr}`);
         
         return {
-            x: touchX,
-            y: touchY
+            x: touchX / dpr,
+            y: touchY / dpr
         };
     }
     

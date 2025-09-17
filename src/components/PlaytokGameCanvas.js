@@ -12,6 +12,8 @@ import { QuizBlitzGame } from '../games/QuizBlitzGame.js';
 import { ColorMatchTapGame } from '../games/ColorMatchTapGame.js';
 import { SkyDropGame } from '../games/SkyDropGame.js';
 import { ShapeBuilderGame } from '../games/ShapeBuilderGame.js';
+import { TapDashGame } from '../games/TapDashGame.js';
+import { BalloonPopFrenzy } from '../games/BalloonPopFrenzy.js';
 
 // Enable canvas touch events on mobile
 document.addEventListener('touchmove', function(e) {
@@ -35,6 +37,8 @@ const GAME_CLASSES = {
     'color-match-tap': ColorMatchTapGame,
     'sky-drop': SkyDropGame,
     'shape-builder': ShapeBuilderGame,
+    'tap-dash': TapDashGame,
+    'balloon-pop-frenzy': BalloonPopFrenzy,
     // We'll add more games here as we convert them
 };
 
