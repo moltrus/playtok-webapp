@@ -193,7 +193,7 @@ export class StackTowerGame extends BaseGame {
         }
     }
 
-    update() {
+    update(deltaTime) {
         try {
             if (!this.isRunning || this.gameOver) return;
             
@@ -201,7 +201,7 @@ export class StackTowerGame extends BaseGame {
             
             if (this.currentBlock && this.currentBlock.moving) {
                 // Calculate the next position
-                const nextX = this.currentBlock.x + this.speed * this.direction;
+                const nextX = this.currentBlock.x + this.speed * this.direction * (deltaTime / 16);
                 
                 // Boundary checks - add some buffer to prevent edge sticking
                 const leftBound = 2; // Small buffer from left edge
@@ -403,22 +403,8 @@ export class StackTowerGame extends BaseGame {
         }
     }
 
-    handleTouchStart(e) {
-        try {
-            super.handleTouchStart(e);
-            this.dropBlock();
-        } catch (error) {
-            console.error('Error in handleTouchStart:', error);
-        }
-    }
-
-    handleMouseDown(e) {
-        try {
-            super.handleMouseDown(e);
-            this.dropBlock();
-        } catch (error) {
-            console.error('Error in handleMouseDown:', error);
-        }
+    handlePointerDown(e) {
+        this.dropBlock();
     }
     
     // Override the parent's method with specific handling for StackTower

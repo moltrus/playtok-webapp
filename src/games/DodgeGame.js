@@ -80,13 +80,9 @@ export class DodgeGame extends BaseGame {
         }
     }
 
-    update() {
+    update(deltaTime) {
         try {
             if (!this.isRunning) return;
-
-            const currentTime = Date.now();
-            const deltaTime = currentTime - this.lastTime;
-            this.lastTime = currentTime;
 
             this.timeRemaining -= deltaTime;
             
@@ -113,9 +109,9 @@ export class DodgeGame extends BaseGame {
         }
     }
 
-    spawnObstacles() {
+    spawnObstacles(deltaTime) {
         try {
-            this.spawnTimer += 16;
+            this.spawnTimer += deltaTime;
             
             if (this.spawnTimer >= this.spawnRate) {
                 const canvasWidth = this.canvasWidth || 320;
@@ -256,108 +252,28 @@ export class DodgeGame extends BaseGame {
         }
     }
 
-    getTouchPos(e) {
-        try {
-            const rect = this.canvas.getBoundingClientRect();
-            return {
-                x: (e.touches && e.touches[0] ? e.touches[0].clientX : 0) - rect.left,
-                y: (e.touches && e.touches[0] ? e.touches[0].clientY : 0) - rect.top
-            };
-        } catch (error) {
-            console.error('Error in getTouchPos:', error);
-            return { x: 0, y: 0 };
+    handlePointerDown(e) {
+        this.isDragging = true;
+        const { x, y } = this.getLogicalCoordinates(e.clientX, e.clientY);
+        if (this.player) {
+            this.player.x = x;
+            this.player.y = y;
         }
     }
 
-    getMousePos(e) {
-        try {
-            const rect = this.canvas.getBoundingClientRect();
-            return {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
-            };
-        } catch (error) {
-            console.error('Error in getMousePos:', error);
-            return { x: 0, y: 0 };
+    handlePointerMove(e) {
+        if (this.isDragging && this.player) {
+            const { x, y } = this.getLogicalCoordinates(e.clientX, e.clientY);
+            const canvasWidth = this.canvasWidth || 320;
+            const canvasHeight = this.canvasHeight || 480;
+
+            this.player.x = Math.max(this.player.radius, Math.min(canvasWidth - this.player.radius, x));
+            this.player.y = Math.max(this.player.radius, Math.min(canvasHeight - this.player.radius, y));
         }
     }
 
-    handleTouchStart(e) {
-        try {
-            super.handleTouchStart(e);
-            this.isDragging = true;
-            const pos = this.getTouchPos(e);
-            if (this.player) {
-                this.player.x = pos.x;
-                this.player.y = pos.y;
-            }
-        } catch (error) {
-            console.error('Error in handleTouchStart:', error);
-        }
-    }
-
-    handleTouchMove(e) {
-        try {
-            super.handleTouchMove(e);
-            if (this.isDragging && this.player) {
-                const pos = this.getTouchPos(e);
-                const canvasWidth = this.canvasWidth || 320;
-                const canvasHeight = this.canvasHeight || 480;
-                
-                this.player.x = Math.max(this.player.radius, Math.min(canvasWidth - this.player.radius, pos.x));
-                this.player.y = Math.max(this.player.radius, Math.min(canvasHeight - this.player.radius, pos.y));
-            }
-        } catch (error) {
-            console.error('Error in handleTouchMove:', error);
-        }
-    }
-
-    handleTouchEnd(e) {
-        try {
-            super.handleTouchEnd(e);
-            this.isDragging = false;
-        } catch (error) {
-            console.error('Error in handleTouchEnd:', error);
-        }
-    }
-
-    handleMouseDown(e) {
-        try {
-            super.handleMouseDown(e);
-            this.isDragging = true;
-            const pos = this.getMousePos(e);
-            if (this.player) {
-                this.player.x = pos.x;
-                this.player.y = pos.y;
-            }
-        } catch (error) {
-            console.error('Error in handleMouseDown:', error);
-        }
-    }
-
-    handleMouseMove(e) {
-        try {
-            super.handleMouseMove(e);
-            if (this.isDragging && this.player) {
-                const pos = this.getMousePos(e);
-                const canvasWidth = this.canvasWidth || 320;
-                const canvasHeight = this.canvasHeight || 480;
-                
-                this.player.x = Math.max(this.player.radius, Math.min(canvasWidth - this.player.radius, pos.x));
-                this.player.y = Math.max(this.player.radius, Math.min(canvasHeight - this.player.radius, pos.y));
-            }
-        } catch (error) {
-            console.error('Error in handleMouseMove:', error);
-        }
-    }
-
-    handleMouseUp(e) {
-        try {
-            super.handleMouseUp(e);
-            this.isDragging = false;
-        } catch (error) {
-            console.error('Error in handleMouseUp:', error);
-        }
+    handlePointerUp(e) {
+        this.isDragging = false;
     }
 
     drawHappyFace(x, y, radius, color) {

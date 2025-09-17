@@ -189,13 +189,9 @@ export class QuizBlitzGame extends BaseGame {
         }
     }
 
-    update() {
+    update(deltaTime) {
         try {
             if (!this.isRunning) return;
-
-            const currentTime = Date.now();
-            const deltaTime = currentTime - this.lastTime;
-            this.lastTime = currentTime;
 
             // If showing feedback, count down the feedback timer
             if (this.showFeedback) {
@@ -417,71 +413,18 @@ export class QuizBlitzGame extends BaseGame {
                y <= buttonY + this.buttonHeight;
     }
     
-    getTouchPos(e) {
-        try {
-            e.preventDefault();
-            if (e.touches.length === 0) return null;
-            
-            const touch = e.touches[0];
-            const rect = this.canvas.getBoundingClientRect();
-            return {
-                x: touch.clientX - rect.left,
-                y: touch.clientY - rect.top
-            };
-        } catch (error) {
-            console.error('Error in getTouchPos:', error);
-            return null;
-        }
-    }
-    
-    getMousePos(e) {
-        try {
-            const rect = this.canvas.getBoundingClientRect();
-            return {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
-            };
-        } catch (error) {
-            console.error('Error in getMousePos:', error);
-            return null;
-        }
-    }
-    
-    handleTouchStart(e) {
-        try {
-            if (!this.isRunning) return;
-            
-            const pos = this.getTouchPos(e);
-            if (!pos) return;
-            
-            // Check if any option was clicked
-            for (let i = 0; i < 4; i++) {
-                if (this.isPointInButton(pos.x, pos.y, i)) {
-                    this.handleAnswer(i);
-                    break;
-                }
+    handlePointerDown(e) {
+        if (!this.isRunning) return;
+
+        const { x, y } = this.getLogicalCoordinates(e.clientX, e.clientY);
+
+        if (this.showFeedback) return;
+
+        for (let i = 0; i < 4; i++) {
+            if (this.isPointInButton(x, y, i)) {
+                this.handleAnswer(i);
+                break;
             }
-        } catch (error) {
-            console.error('Error in handleTouchStart:', error);
-        }
-    }
-    
-    handleMouseDown(e) {
-        try {
-            if (!this.isRunning) return;
-            
-            const pos = this.getMousePos(e);
-            if (!pos) return;
-            
-            // Check if any option was clicked
-            for (let i = 0; i < 4; i++) {
-                if (this.isPointInButton(pos.x, pos.y, i)) {
-                    this.handleAnswer(i);
-                    break;
-                }
-            }
-        } catch (error) {
-            console.error('Error in handleMouseDown:', error);
         }
     }
     

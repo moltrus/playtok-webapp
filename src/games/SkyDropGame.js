@@ -116,12 +116,8 @@ export class SkyDropGame extends BaseGame {
         super.start();
     }
 
-    update() {
+    update(deltaTime) {
         if (!this.isRunning) return;
-
-        const currentTime = Date.now();
-        const deltaTime = currentTime - this.lastTime;
-        this.lastTime = currentTime;
 
         this.timeRemaining -= deltaTime;
         
@@ -424,67 +420,23 @@ export class SkyDropGame extends BaseGame {
         );
     }
 
-    handleTouchStart(e) {
-        super.handleTouchStart(e);
-        
+    handlePointerDown(e) {
         if (!this.isRunning) return;
-        
-        const touch = e.touches[0];
-        if (!touch) return;
-        
         this.isDragging = true;
-        this.dragStartX = touch.clientX;
+        this.dragStartX = this.getLogicalCoordinates(e.clientX, e.clientY).x;
     }
-    
-    handleTouchMove(e) {
-        super.handleTouchMove(e);
-        
+
+    handlePointerMove(e) {
         if (!this.isRunning || !this.isDragging) return;
-        
-        const touch = e.touches[0];
-        if (!touch) return;
-        
-        const deltaX = touch.clientX - this.dragStartX;
-        this.dragStartX = touch.clientX;
-        
-        // Move player horizontally
-        this.player.x += deltaX * 1.5; // Apply sensitivity multiplier
-        
-        // Keep player within screen bounds
+        const { x } = this.getLogicalCoordinates(e.clientX, e.clientY);
+        const deltaX = x - this.dragStartX;
+        this.dragStartX = x;
+
+        this.player.x += deltaX * 1.5;
         this.player.x = Math.max(0, Math.min(this.canvasWidth - this.player.width, this.player.x));
     }
-    
-    handleTouchEnd(e) {
-        super.handleTouchEnd(e);
-        this.isDragging = false;
-    }
-    
-    handleMouseDown(e) {
-        super.handleMouseDown(e);
-        
-        if (!this.isRunning) return;
-        
-        this.isDragging = true;
-        this.dragStartX = e.clientX;
-    }
-    
-    handleMouseMove(e) {
-        super.handleMouseMove(e);
-        
-        if (!this.isRunning || !this.isDragging) return;
-        
-        const deltaX = e.clientX - this.dragStartX;
-        this.dragStartX = e.clientX;
-        
-        // Move player horizontally
-        this.player.x += deltaX * 1.5; // Apply sensitivity multiplier
-        
-        // Keep player within screen bounds
-        this.player.x = Math.max(0, Math.min(this.canvasWidth - this.player.width, this.player.x));
-    }
-    
-    handleMouseUp(e) {
-        super.handleMouseUp(e);
+
+    handlePointerUp(e) {
         this.isDragging = false;
     }
 }

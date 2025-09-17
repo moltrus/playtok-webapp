@@ -228,7 +228,7 @@ export class TapDashGame extends BaseGame {
         }
     }
 
-    handleTap(e) {
+    handlePointerDown(e) {
         e.preventDefault();
         if (!this.isRunning) return;
 
@@ -266,13 +266,9 @@ export class TapDashGame extends BaseGame {
         this.gameState.score++;
     }
 
-    update() {
+    update(deltaTime) {
         if (!this.isRunning) return;
 
-        const currentTime = Date.now();
-        const deltaTime = currentTime - this.lastTime;
-        this.lastTime = currentTime;
-        
         console.log('Game Update - Position:', 
             `x: ${this.player.x.toFixed(2)}, y: ${this.player.y.toFixed(2)}`,
             'Cell:', 

@@ -42,48 +42,24 @@ export class QuickTapGame extends BaseGame {
         super.start();
     }
 
-    update() {
+    update(deltaTime) {
         if (!this.isRunning) return;
 
-        const currentTime = Date.now();
-        let deltaTime = currentTime - this.lastTime;
-        
-        // Check for extremely large time jumps which could cause game to end instantly
-        if (deltaTime > 5000) {
-            console.log('Very large time delta detected:', deltaTime, 'ms. Resetting to prevent instant game over.');
-            deltaTime = 16; // Use a reasonable frame time (~60fps)
-        } 
-        // Safety check for unreasonable delta time (e.g., after tab switch)
-        else if (deltaTime > 100) {
-            deltaTime = 100; // Cap at 100ms to prevent huge jumps
-        }
-        
-        this.lastTime = currentTime;
-
-        // Update time with logging to track timer issues
-        const oldTimeRemaining = this.timeRemaining;
         this.timeRemaining -= deltaTime;
-        
-        // Debug time tracking
-        if (deltaTime > 1000) {
-            console.log(`Large time decrease: ${deltaTime}ms. Time remaining: ${this.timeRemaining}ms`);
-        }
-        
-        // Game over check
+
         if (this.timeRemaining <= 0) {
-            console.log('Game over due to time expiring. Initial game time:', this.gameTime, 'ms');
             this.stop();
             return;
         }
 
+        this.spawnTimer += deltaTime;
         this.spawnShapes();
-        this.updateShapes();
+        this.updateShapes(deltaTime);
     }
 
     spawnShapes() {
-        this.spawnTimer += 16;
-        
         if (this.spawnTimer >= this.spawnRate) {
+            this.spawnTimer = 0;
             const isTarget = Math.random() < 0.4; // 40% chance for target
             
             // Ensure shapes appear within visible canvas bounds
@@ -121,10 +97,10 @@ export class QuickTapGame extends BaseGame {
         }
     }
 
-    updateShapes() {
+    updateShapes(deltaTime) {
         // Update targets
         for (let i = this.targets.length - 1; i >= 0; i--) {
-            this.targets[i].life -= 16;
+            this.targets[i].life -= deltaTime;
             if (this.targets[i].life <= 0) {
                 this.targets.splice(i, 1);
                 // Missed a target, lose points
@@ -134,7 +110,7 @@ export class QuickTapGame extends BaseGame {
         
         // Update distractors
         for (let i = this.distractors.length - 1; i >= 0; i--) {
-            this.distractors[i].life -= 16;
+            this.distractors[i].life -= deltaTime;
             if (this.distractors[i].life <= 0) {
                 this.distractors.splice(i, 1);
             }
@@ -192,13 +168,6 @@ export class QuickTapGame extends BaseGame {
                 this.particles.splice(i, 1);
             }
         }
-        
-        // Timer display
-        const secondsRemaining = Math.ceil(this.timeRemaining / 1000);
-        this.ctx.fillStyle = 'white';
-        this.ctx.font = '16px Arial';
-        this.ctx.textAlign = 'right';
-        this.ctx.fillText(`Time: ${secondsRemaining}s`, this.canvasWidth - 20, 30);
         
         // Draw flash effect
         if (this.flashEffect) {
@@ -280,32 +249,9 @@ export class QuickTapGame extends BaseGame {
         };
     }
 
-    getTouchPos(e) {
-        const rect = this.canvas.getBoundingClientRect();
-        return {
-            x: e.touches[0].clientX - rect.left,
-            y: e.touches[0].clientY - rect.top
-        };
-    }
-
-    getMousePos(e) {
-        const rect = this.canvas.getBoundingClientRect();
-        return {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
-        };
-    }
-
-    handleTouchStart(e) {
-        super.handleTouchStart(e);
-        const pos = this.getTouchPos(e);
-        this.checkTap(pos.x, pos.y);
-    }
-
-    handleMouseDown(e) {
-        super.handleMouseDown(e);
-        const pos = this.getMousePos(e);
-        this.checkTap(pos.x, pos.y);
+    handlePointerDown(e) {
+        const { x, y } = this.getLogicalCoordinates(e.clientX, e.clientY);
+        this.checkTap(x, y);
     }
 
     drawGem(shape, alpha) {

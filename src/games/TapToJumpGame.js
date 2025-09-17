@@ -116,15 +116,13 @@ export class TapToJumpGame extends BaseGame {
         super.start();
     }
 
-    update() {
+    update(deltaTime) {
         // Check if game is running
         if (!this.isRunning) {
             return;
         }
 
         // Handle time updates
-        const currentTime = Date.now();
-        let deltaTime = currentTime - this.lastTime;
         
         // Check for extremely large time jumps which could cause game to end instantly
         if (deltaTime > 5000) {
@@ -173,10 +171,10 @@ export class TapToJumpGame extends BaseGame {
         }
     }
 
-    updatePlayer() {
+    updatePlayer(deltaTime) {
         if (this.player.isJumping) {
-            this.player.velocityY += this.gravity;
-            this.player.y += this.player.velocityY;
+            this.player.velocityY += this.gravity * (deltaTime / 16);
+            this.player.y += this.player.velocityY * (deltaTime / 16);
             
             // Add occasional particles during jump for better visual effect
             if (Math.random() < 0.1) {
@@ -214,11 +212,11 @@ export class TapToJumpGame extends BaseGame {
         }
     }
 
-    updateObstacles() {
+    updateObstacles(deltaTime) {
         // Simple obstacle movement
         for (let i = this.obstacles.length - 1; i >= 0; i--) {
             // Move obstacles from right to left at constant speed
-            this.obstacles[i].x -= this.gameSpeed;
+            this.obstacles[i].x -= this.gameSpeed * (deltaTime / 16);
             
             // Remove obstacles that are off-screen
             if (this.obstacles[i].x + this.obstacles[i].width < -50) {
@@ -429,13 +427,7 @@ export class TapToJumpGame extends BaseGame {
         }
     }
 
-    handleTouchStart(e) {
-        super.handleTouchStart(e);
-        this.jump();
-    }
-
-    handleMouseDown(e) {
-        super.handleMouseDown(e);
+    handlePointerDown(e) {
         this.jump();
     }
     

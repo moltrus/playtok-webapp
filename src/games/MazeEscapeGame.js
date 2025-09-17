@@ -215,13 +215,9 @@ export class MazeEscapeGame extends BaseGame {
         }
     }
 
-    update() {
+    update(deltaTime) {
         try {
             if (!this.isRunning) return;
-
-            const currentTime = Date.now();
-            const deltaTime = currentTime - this.lastTime;
-            this.lastTime = currentTime;
 
             this.timeRemaining -= deltaTime;
             
@@ -333,113 +329,29 @@ export class MazeEscapeGame extends BaseGame {
         }
     }
 
-    getTouchStart(e) {
-        try {
-            const rect = this.canvas.getBoundingClientRect();
-            return {
-                x: e.touches[0].clientX - rect.left,
-                y: e.touches[0].clientY - rect.top
-            };
-        } catch (error) {
-            console.error('Error in getTouchStart:', error);
-            return { x: 0, y: 0 };
-        }
+    handlePointerDown(e) {
+        this.touchStart = this.getLogicalCoordinates(e.clientX, e.clientY);
     }
 
-    getTouchEnd(e) {
-        try {
-            const rect = this.canvas.getBoundingClientRect();
-            return {
-                x: e.changedTouches[0].clientX - rect.left,
-                y: e.changedTouches[0].clientY - rect.top
-            };
-        } catch (error) {
-            console.error('Error in getTouchEnd:', error);
-            return { x: 0, y: 0 };
-        }
-    }
+    handlePointerUp(e) {
+        if (!this.touchStart) return;
 
-    handleTouchStart(e) {
-        try {
-            super.handleTouchStart(e);
-            this.touchStart = this.getTouchStart(e);
-        } catch (error) {
-            console.error('Error in handleTouchStart:', error);
-        }
-    }
+        const touchEnd = this.getLogicalCoordinates(e.clientX, e.clientY);
+        const dx = touchEnd.x - this.touchStart.x;
+        const dy = touchEnd.y - this.touchStart.y;
+        const threshold = 30;
 
-    handleTouchEnd(e) {
-        try {
-            super.handleTouchEnd(e);
-            if (this.touchStart) {
-                const touchEnd = this.getTouchEnd(e);
-                const dx = touchEnd.x - this.touchStart.x;
-                const dy = touchEnd.y - this.touchStart.y;
-                const threshold = 30;
-                
-                if (Math.abs(dx) > Math.abs(dy)) {
-                    // Horizontal swipe
-                    if (Math.abs(dx) > threshold) {
-                        this.movePlayer(dx > 0 ? 1 : -1, 0);
-                    }
-                } else {
-                    // Vertical swipe
-                    if (Math.abs(dy) > threshold) {
-                        this.movePlayer(0, dy > 0 ? 1 : -1);
-                    }
-                }
-                
-                this.touchStart = null;
+        if (Math.abs(dx) > Math.abs(dy)) {
+            if (Math.abs(dx) > threshold) {
+                this.movePlayer(dx > 0 ? 1 : -1, 0);
             }
-        } catch (error) {
-            console.error('Error in handleTouchEnd:', error);
-        }
-    }
-
-    handleMouseDown(e) {
-        try {
-            super.handleMouseDown(e);
-            const rect = this.canvas.getBoundingClientRect();
-            this.mouseStart = {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
-            };
-        } catch (error) {
-            console.error('Error in handleMouseDown:', error);
-        }
-    }
-
-    handleMouseUp(e) {
-        try {
-            super.handleMouseUp(e);
-            if (this.mouseStart) {
-                const rect = this.canvas.getBoundingClientRect();
-                const mouseEnd = {
-                    x: e.clientX - rect.left,
-                    y: e.clientY - rect.top
-                };
-                
-                const dx = mouseEnd.x - this.mouseStart.x;
-                const dy = mouseEnd.y - this.mouseStart.y;
-                const threshold = 30;
-                
-                if (Math.abs(dx) > Math.abs(dy)) {
-                    // Horizontal swipe
-                    if (Math.abs(dx) > threshold) {
-                        this.movePlayer(dx > 0 ? 1 : -1, 0);
-                    }
-                } else {
-                    // Vertical swipe
-                    if (Math.abs(dy) > threshold) {
-                        this.movePlayer(0, dy > 0 ? 1 : -1);
-                    }
-                }
-                
-                this.mouseStart = null;
+        } else {
+            if (Math.abs(dy) > threshold) {
+                this.movePlayer(0, dy > 0 ? 1 : -1);
             }
-        } catch (error) {
-            console.error('Error in handleMouseUp:', error);
         }
+
+        this.touchStart = null;
     }
 
     drawSmiley(x, y, radius) {

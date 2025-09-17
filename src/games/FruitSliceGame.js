@@ -77,45 +77,21 @@ export class FruitSliceGame extends BaseGame {
         }
     }
 
-    update() {
+    update(deltaTime) {
         if (!this.isRunning) return;
 
-        try {
-            const currentTime = Date.now();
-            
-            // Ensure lastTime is initialized to prevent large deltaTime
-            if (!this.lastTime) {
-                this.lastTime = currentTime;
-            }
-            
-            const deltaTime = currentTime - this.lastTime;
-            
-            // Check for extremely large time jumps which could cause game to end instantly
-            let adjustedDeltaTime = deltaTime;
-            if (deltaTime > 5000) {
-                console.log('Very large time delta detected:', deltaTime, 'ms. Capping to prevent instant game over.');
-                adjustedDeltaTime = 100; // Cap at 100ms to prevent huge jumps
-            }
-            
-            this.lastTime = currentTime;
-            this.timeRemaining -= adjustedDeltaTime;
-            
-            if (this.timeRemaining <= 0 || this.misses >= this.maxMisses) {
-                console.log('Game over. Time remaining:', this.timeRemaining, 'Misses:', this.misses);
-                this.stop();
-                return;
-            }
-
-            this.updateFruits();
-            this.spawnFruits();
-            this.updateSliceTrail();
-        } catch (error) {
-            console.error('Error in FruitSliceGame.update():', error);
-            // Don't stop the game for a single frame error
+        this.timeRemaining -= deltaTime;
+        if (this.timeRemaining <= 0 || this.misses >= this.maxMisses) {
+            this.stop();
+            return;
         }
+
+        this.updateFruits(deltaTime);
+        this.spawnFruits(deltaTime);
+        this.updateSliceTrail();
     }
 
-    updateFruits() {
+    updateFruits(deltaTime) {
         try {
             if (!this.fruits || !Array.isArray(this.fruits)) {
                 console.error('Fruits array is invalid');
@@ -160,10 +136,10 @@ export class FruitSliceGame extends BaseGame {
         }
     }
 
-    spawnFruits() {
+    spawnFruits(deltaTime) {
         try {
             // Increment timer
-            this.spawnTimer += 16;
+            this.spawnTimer += deltaTime;
             
             // Get safe canvas dimensions
             const canvasWidth = this.canvasWidth || 320;
@@ -271,6 +247,18 @@ export class FruitSliceGame extends BaseGame {
     createSliceEffect(fruit) {
         // Simple slice effect - fruit disappears with some visual feedback
         fruit.sliced = true;
+        // Add particle effects for a "juicy" slice
+        for (let i = 0; i < 20; i++) {
+            this.particles.push({
+                x: fruit.x,
+                y: fruit.y,
+                vx: (Math.random() - 0.5) * 5,
+                vy: (Math.random() - 0.5) * 5,
+                size: Math.random() * 3 + 1,
+                color: fruit.color,
+                life: 30,
+            });
+        }
     }
 
     draw() {
@@ -307,6 +295,22 @@ export class FruitSliceGame extends BaseGame {
                     if (fruit && !fruit.sliced) {
                         this.drawFruit(fruit);
                     }
+                }
+            }
+
+            // Draw particles
+            for (let i = this.particles.length - 1; i >= 0; i--) {
+                const p = this.particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life--;
+                if (p.life <= 0) {
+                    this.particles.splice(i, 1);
+                } else {
+                    this.ctx.fillStyle = p.color;
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    this.ctx.fill();
                 }
             }
             
@@ -376,70 +380,25 @@ export class FruitSliceGame extends BaseGame {
         this.ctx.fillText(text, x, y);
     }
 
-    getPointerPos(e) {
-        const rect = this.canvas.getBoundingClientRect();
-        if (e.touches && e.touches.length > 0) {
-            return {
-                x: e.touches[0].clientX - rect.left,
-                y: e.touches[0].clientY - rect.top
-            };
-        } else {
-            return {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
-            };
-        }
-    }
-
-    handleTouchStart(e) {
-        super.handleTouchStart(e);
+    handlePointerDown(e) {
         this.isSlicing = true;
-        const pos = this.getPointerPos(e);
-        this.sliceTrail = [{ x: pos.x, y: pos.y, life: 100 }];
+        const { x, y } = this.getLogicalCoordinates(e.clientX, e.clientY);
+        this.sliceTrail = [{ x, y, life: 100 }];
     }
 
-    handleTouchMove(e) {
-        super.handleTouchMove(e);
+    handlePointerMove(e) {
         if (this.isSlicing) {
-            const pos = this.getPointerPos(e);
-            this.sliceTrail.push({ x: pos.x, y: pos.y, life: 100 });
-            this.checkSlice(pos.x, pos.y);
-            
-            // Limit trail length
+            const { x, y } = this.getLogicalCoordinates(e.clientX, e.clientY);
+            this.sliceTrail.push({ x, y, life: 100 });
+            this.checkSlice(x, y);
+
             if (this.sliceTrail.length > 20) {
                 this.sliceTrail.shift();
             }
         }
     }
 
-    handleTouchEnd(e) {
-        super.handleTouchEnd(e);
-        this.isSlicing = false;
-    }
-
-    handleMouseDown(e) {
-        super.handleMouseDown(e);
-        this.isSlicing = true;
-        const pos = this.getPointerPos(e);
-        this.sliceTrail = [{ x: pos.x, y: pos.y, life: 100 }];
-    }
-
-    handleMouseMove(e) {
-        super.handleMouseMove(e);
-        if (this.isSlicing) {
-            const pos = this.getPointerPos(e);
-            this.sliceTrail.push({ x: pos.x, y: pos.y, life: 100 });
-            this.checkSlice(pos.x, pos.y);
-            
-            // Limit trail length
-            if (this.sliceTrail.length > 20) {
-                this.sliceTrail.shift();
-            }
-        }
-    }
-
-    handleMouseUp(e) {
-        super.handleMouseUp(e);
+    handlePointerUp(e) {
         this.isSlicing = false;
     }
     

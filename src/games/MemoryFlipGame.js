@@ -331,61 +331,27 @@ export class MemoryFlipGame extends BaseGame {
         }
     }
 
-    handleTouchStart(e) {
-        super.handleTouchStart(e);
-        this.checkCardClick(e);
-    }
+    handlePointerDown(e) {
+        if (!this.canFlip || !this.isRunning || this.flippedCards.length >= 2) {
+            return;
+        }
 
-    handleMouseDown(e) {
-        super.handleMouseDown(e);
-        this.checkCardClick(e);
-    }
+        const { x, y } = this.getLogicalCoordinates(e.clientX, e.clientY);
 
-    checkCardClick(e) {
-        try {
-            // If we can't flip cards yet, return
-            if (!this.canFlip || !this.isRunning) return;
-            
-            // If we already have 2 flipped cards, return
-            if (this.flippedCards.length >= 2) return;
-            
-            // Get click position
-            const rect = this.canvas.getBoundingClientRect();
-            const x = (e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0)) - rect.left;
-            const y = (e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0)) - rect.top;
-            
-            // Check if click is on a card
-            for (let i = 0; i < this.cards.length; i++) {
-                const card = this.cards[i];
+        for (const card of this.cards) {
+            if (!card.flipped && !card.matched &&
+                x >= card.x && x <= card.x + this.cardSize &&
+                y >= card.y && y <= card.y + this.cardSize) {
                 
-                // Skip if card is already flipped or matched
-                if (card.flipped || card.matched) continue;
-                
-                // Check if click is inside card bounds
-                if (
-                    x >= card.x && 
-                    x <= card.x + this.cardSize && 
-                    y >= card.y && 
-                    y <= card.y + this.cardSize
-                ) {
-                    // Flip the card
-                    card.flipped = true;
-                    this.flippedCards.push(card);
-                    
-                    // If we have 2 flipped cards, check if they match
-                    if (this.flippedCards.length === 2) {
-                        this.canFlip = false;
-                        
-                        // Set timeout to check match
-                        setTimeout(() => this.checkMatch(), 1000);
-                    }
-                    
-                    break;
+                card.flipped = true;
+                this.flippedCards.push(card);
+
+                if (this.flippedCards.length === 2) {
+                    this.canFlip = false;
+                    setTimeout(() => this.checkMatch(), 1000);
                 }
+                break;
             }
-        } catch (error) {
-            console.error('Error in checkCardClick:', error);
-            this.canFlip = true;
         }
     }
 

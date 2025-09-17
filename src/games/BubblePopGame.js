@@ -261,13 +261,9 @@ export class BubblePopGame extends BaseGame {
         this.timeRemaining = currentTime;
     }
 
-    update() {
+    update(deltaTime) {
         try {
             if (!this.isRunning) return;
-
-            const currentTime = Date.now();
-            const deltaTime = currentTime - this.lastTime;
-            this.lastTime = currentTime;
 
             this.timeRemaining -= deltaTime;
             
@@ -487,59 +483,13 @@ export class BubblePopGame extends BaseGame {
         }
     }
 
-    getTouchPos(e) {
-        try {
-            const rect = this.canvas.getBoundingClientRect();
-            return {
-                x: e.touches[0].clientX - rect.left,
-                y: e.touches[0].clientY - rect.top
-            };
-        } catch (error) {
-            console.error('Error in getTouchPos:', error);
-            return { x: 0, y: 0 };
-        }
-    }
+    handlePointerDown(e) {
+        const { x, y } = this.getLogicalCoordinates(e.clientX, e.clientY);
+        const bubble = this.getClickedBubble(x, y);
 
-    getMousePos(e) {
-        try {
-            const rect = this.canvas.getBoundingClientRect();
-            return {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
-            };
-        } catch (error) {
-            console.error('Error in getMousePos:', error);
-            return { x: 0, y: 0 };
-        }
-    }
-
-    handleTouchStart(e) {
-        try {
-            super.handleTouchStart(e);
-            const pos = this.getTouchPos(e);
-            const bubble = this.getClickedBubble(pos.x, pos.y);
-            
-            if (bubble) {
-                const cluster = this.findCluster(bubble);
-                this.popCluster(cluster);
-            }
-        } catch (error) {
-            console.error('Error in handleTouchStart:', error);
-        }
-    }
-
-    handleMouseDown(e) {
-        try {
-            super.handleMouseDown(e);
-            const pos = this.getMousePos(e);
-            const bubble = this.getClickedBubble(pos.x, pos.y);
-            
-            if (bubble) {
-                const cluster = this.findCluster(bubble);
-                this.popCluster(cluster);
-            }
-        } catch (error) {
-            console.error('Error in handleMouseDown:', error);
+        if (bubble) {
+            const cluster = this.findCluster(bubble);
+            this.popCluster(cluster);
         }
     }
     

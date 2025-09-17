@@ -52,12 +52,8 @@ export class ColorMatchTapGame extends BaseGame {
         super.start();
     }
 
-    update() {
+    update(deltaTime) {
         if (!this.isRunning) return;
-
-        const currentTime = Date.now();
-        const deltaTime = currentTime - this.lastTime;
-        this.lastTime = currentTime;
 
         this.timeRemaining -= deltaTime;
         this.nextTargetChangeTime -= deltaTime;
@@ -91,8 +87,8 @@ export class ColorMatchTapGame extends BaseGame {
         }
     }
 
-    spawnCircles() {
-        this.spawnTimer += 16;
+    spawnCircles(deltaTime) {
+        this.spawnTimer += deltaTime;
         
         if (this.spawnTimer >= this.spawnRate) {
             // Generate random non-overlapping positions
@@ -370,47 +366,10 @@ export class ColorMatchTapGame extends BaseGame {
         }
     }
 
-    handleTap(x, y) {
+    handlePointerDown(e) {
         if (!this.isRunning) return;
+        const { x, y } = this.getLogicalCoordinates(e.clientX, e.clientY);
         this.checkTap(x, y);
-    }
-
-    handleTouchStart(e) {
-        super.handleTouchStart(e);
-        
-        if (!this.isRunning) return;
-        
-        const pos = this.getTouchPos(e);
-        this.checkTap(pos.x, pos.y);
-    }
-
-    handleMouseDown(e) {
-        super.handleMouseDown(e);
-        
-        if (!this.isRunning) return;
-        
-        const pos = this.getMousePos(e);
-        this.checkTap(pos.x, pos.y);
-    }
-
-    getTouchPos(e) {
-        const rect = this.canvas.getBoundingClientRect();
-        const touch = e.touches[0];
-        
-        if (!touch) return { x: 0, y: 0 };
-        
-        return {
-            x: (touch.clientX - rect.left) * (this.canvas.width / rect.width),
-            y: (touch.clientY - rect.top) * (this.canvas.height / rect.height)
-        };
-    }
-
-    getMousePos(e) {
-        const rect = this.canvas.getBoundingClientRect();
-        return {
-            x: (e.clientX - rect.left) * (this.canvas.width / rect.width),
-            y: (e.clientY - rect.top) * (this.canvas.height / rect.height)
-        };
     }
     
     drawText(text, x, y, size = 24, color = 'white', align = 'center') {

@@ -202,12 +202,8 @@ export class ShapeBuilderGame extends BaseGame {
     }
     // (Removed duplicate block that was outside any method)
 
-    update() {
+    update(deltaTime) {
         if (!this.isRunning) return;
-
-        const currentTime = Date.now();
-        const deltaTime = currentTime - this.lastTime;
-        this.lastTime = currentTime;
 
         this.timeRemaining -= deltaTime;
         
@@ -480,149 +476,45 @@ export class ShapeBuilderGame extends BaseGame {
         return false;
     }
 
-    handleTouchStart(e) {
-        super.handleTouchStart(e);
-        
+    handlePointerDown(e) {
         if (!this.isRunning) return;
-        
-        const touch = e.touches[0];
-        if (!touch) return;
-        
-        const pos = this.getTouchPos(e);
-        this.handlePointerStart(pos.x, pos.y);
-    }
-    
-    handleMouseDown(e) {
-        super.handleMouseDown(e);
-        
-        if (!this.isRunning) return;
-        
-        const pos = this.getMousePos(e);
-        this.handlePointerStart(pos.x, pos.y);
-    }
-    
-    handlePointerStart(x, y) {
-        console.log(`Pointer start at (${x}, ${y})`);
-        
-        // Check if we clicked on a shape
+
+        const { x, y } = this.getLogicalCoordinates(e.clientX, e.clientY);
+
         for (let i = this.shapes.length - 1; i >= 0; i--) {
             const shape = this.shapes[i];
-            
-            // Skip if already placed correctly
-            if (shape.placed) {
-                console.log(`Shape ${i} already placed, skipping`);
-                continue;
-            }
-            
-            console.log(`Checking shape ${i} at (${shape.x}, ${shape.y}) type: ${shape.type}`);
-            
-            // Check if the point is inside the shape
+            if (shape.placed) continue;
+
             if (this.isPointInShape(x, y, shape)) {
-                console.log(`Starting drag for shape ${i}`);
                 this.isDragging = true;
                 this.draggedShape = i;
                 this.dragOffsetX = x - shape.x;
                 this.dragOffsetY = y - shape.y;
-                
-                // Bring the dragged shape to the front (by moving it to the end of the array)
                 this.shapes.push(this.shapes.splice(i, 1)[0]);
                 this.draggedShape = this.shapes.length - 1;
-                
-                console.log(`Drag offset: (${this.dragOffsetX}, ${this.dragOffsetY})`);
-                console.log(`Shape moved to index ${this.draggedShape}`);
-                
                 break;
             }
         }
-        
-        if (!this.isDragging) {
-            console.log('No shape found at this position');
-        }
     }
-    
-    handleTouchMove(e) {
-        super.handleTouchMove(e);
-        
+
+    handlePointerMove(e) {
         if (!this.isRunning || !this.isDragging) return;
-        
-        const touch = e.touches[0];
-        if (!touch) return;
-        
-        const pos = this.getTouchPos(e);
-        this.handlePointerMove(pos.x, pos.y);
-    }
-    
-    handleMouseMove(e) {
-        super.handleMouseMove(e);
-        
-        if (!this.isRunning || !this.isDragging) return;
-        
-        const pos = this.getMousePos(e);
-        this.handlePointerMove(pos.x, pos.y);
-    }
-    
-    handlePointerMove(x, y) {
+
+        const { x, y } = this.getLogicalCoordinates(e.clientX, e.clientY);
+
         if (this.draggedShape !== null) {
             const shape = this.shapes[this.draggedShape];
-            
-            // Store previous position for logging
-            const prevX = shape.x;
-            const prevY = shape.y;
-            
-            // Update shape position
             shape.x = x - this.dragOffsetX;
             shape.y = y - this.dragOffsetY;
-            
-            // Keep shape within canvas bounds
+
             shape.x = Math.max(0, Math.min(this.canvasWidth - shape.width, shape.x));
             shape.y = Math.max(0, Math.min(this.canvasHeight - shape.height, shape.y));
-            
-            // Log movement only when position changes significantly (to reduce spam)
-            if (Math.abs(shape.x - prevX) > 5 || Math.abs(shape.y - prevY) > 5) {
-                console.log(`Moving shape to (${shape.x.toFixed(0)}, ${shape.y.toFixed(0)})`);
-            }
-            
-            // Check proximity to correct target for highlighting
-            const targetOutline = this.targetOutlines[shape.targetIndex];
-            const shapeCenterX = shape.x + shape.width / 2;
-            const shapeCenterY = shape.y + shape.height / 2;
-            const targetCenterX = targetOutline.x + targetOutline.width / 2;
-            const targetCenterY = targetOutline.y + targetOutline.height / 2;
-            
-            const distance = Math.sqrt(
-                Math.pow(shapeCenterX - targetCenterX, 2) + 
-                Math.pow(shapeCenterY - targetCenterY, 2)
-            );
-            
-            // When getting close to the target, give visual feedback
-            if (distance < this.snapTolerance * 1.5) {
-                // Log only when first getting close
-                if (distance < this.snapTolerance * 2 && distance > this.snapTolerance * 1.5) {
-                    console.log(`Shape getting close to target! Distance: ${distance.toFixed(1)}px`);
-                }
-            }
         }
     }
-    
-    handleTouchEnd(e) {
-        super.handleTouchEnd(e);
-        this.handlePointerEnd();
-    }
-    
-    handleMouseUp(e) {
-        super.handleMouseUp(e);
-        this.handlePointerEnd();
-    }
-    
-    handlePointerEnd() {
+
+    handlePointerUp(e) {
         if (this.isDragging && this.draggedShape !== null) {
-            console.log(`Ending drag for shape ${this.draggedShape}`);
-            
-            // Check if the shape is placed correctly
-            const placed = this.checkShapePlacement(this.draggedShape);
-            console.log(`Shape placement result: ${placed ? 'Correct!' : 'Not placed'}`);
-            
-            // Reset dragging state
+            this.checkShapePlacement(this.draggedShape);
             this.isDragging = false;
             this.draggedShape = null;
         }
