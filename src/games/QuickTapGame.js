@@ -61,7 +61,6 @@ export class QuickTapGame extends BaseGame {
         this.lastTime = currentTime;
 
         // Update time with logging to track timer issues
-        const oldTimeRemaining = this.timeRemaining;
         this.timeRemaining -= deltaTime;
         
         // Debug time tracking

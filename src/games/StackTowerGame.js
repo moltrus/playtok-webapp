@@ -85,7 +85,6 @@ export class StackTowerGame extends BaseGame {
             
             // Get safe canvas dimensions
             const canvasWidth = this.canvasWidth || 320;
-            const canvasHeight = this.canvasHeight || 480;
             
             // Reset game parameters
             this.blockWidth = Math.min(120, canvasWidth / 3);

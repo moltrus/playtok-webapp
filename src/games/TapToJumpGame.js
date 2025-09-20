@@ -140,7 +140,6 @@ export class TapToJumpGame extends BaseGame {
         this.lastTime = currentTime;
 
         // Update time remaining with logging to track timer issues
-        const oldTimeRemaining = this.timeRemaining;
         this.timeRemaining -= deltaTime;
         
         // Log if time is decreasing too rapidly
@@ -487,10 +486,7 @@ export class TapToJumpGame extends BaseGame {
         gradient.addColorStop(1, '#98FB98');
         this.ctx.fillStyle = gradient;
         this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-        
-        // Debug is now disabled to prevent flashing
-        const showDebug = false;
-        
+                
         // Ground
         this.ctx.fillStyle = '#8B4513';
         this.ctx.fillRect(0, this.canvasHeight - 70, this.canvasWidth, 70);

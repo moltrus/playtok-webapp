@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useGame } from '../context/GameContext';
 import { PlaytokGameCanvas } from './PlaytokGameCanvas';
 
@@ -49,8 +49,28 @@ export default function GamePlayer({ gameId, onExit }) {
           />
           
           {status === 'ended' && (
-            <div style={{position:'absolute', inset:0, background:'rgba(0,0,0,0.75)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:16}}>
-              <h3 style={{margin:0}}>Score: {score}</h3>
+            <div style={{
+              position:'absolute', 
+              inset:0, 
+              background:'linear-gradient(145deg, rgba(26, 10, 45, 0.95) 0%, rgba(15, 10, 26, 0.98) 30%, rgba(45, 26, 61, 0.95) 70%, rgba(10, 10, 31, 0.98) 100%)', 
+              display:'flex', 
+              flexDirection:'column', 
+              alignItems:'center', 
+              justifyContent:'center', 
+              gap:20,
+              border: '2px solid rgba(0, 255, 255, 0.6)',
+              borderRadius: '8px',
+              backdropFilter: 'blur(12px) saturate(1.5)',
+              boxShadow: '0 0 30px rgba(0, 255, 255, 0.3), 0 0 60px rgba(138, 43, 226, 0.2), inset 0 0 20px rgba(0, 255, 255, 0.1)'
+            }}>
+              <h3 style={{
+                margin:0, 
+                fontFamily: 'Press Start 2P, monospace', 
+                color: '#ffd700', 
+                textShadow: '0 0 12px rgba(255, 215, 0, 0.8)',
+                fontSize: '18px',
+                letterSpacing: '1px'
+              }}>Score: {score}</h3>
               <div className="result-buttons">
                 <button onClick={() => handleExit(true)}>Claim Win</button>
                 <button onClick={() => handleExit(false)}>Exit</button>
