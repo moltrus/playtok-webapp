@@ -1,19 +1,6 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { BallBounceGame } from '../games/BallBounceGame.js';
-import { QuickTapGame } from '../games/QuickTapGame.js';
-import { FruitSliceGame } from '../games/FruitSliceGame.js';
-import { TapToJumpGame } from '../games/TapToJumpGame.js';
-import { MemoryFlipGame } from '../games/MemoryFlipGame.js';
-import { StackTowerGame } from '../games/StackTowerGame.js';
-import { DodgeGame } from '../games/DodgeGame.js';
-import { MazeEscapeGame } from '../games/MazeEscapeGame.js';
-import { BubblePopGame } from '../games/BubblePopGame.js';
-import { QuizBlitzGame } from '../games/QuizBlitzGame.js';
-import { ColorMatchTapGame } from '../games/ColorMatchTapGame.js';
-import { SkyDropGame } from '../games/SkyDropGame.js';
-import { ShapeBuilderGame } from '../games/ShapeBuilderGame.js';
-import { TapDashGame } from '../games/TapDashGame.js';
-import { BalloonPopFrenzy } from '../games/BalloonPopFrenzy.js';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
+import { flushSync } from 'react-dom';
+import { gamePreloader } from '../utils/gamePreloader.js';
 
 // Enable canvas touch events on mobile
 document.addEventListener('touchmove', function(e) {
@@ -22,35 +9,26 @@ document.addEventListener('touchmove', function(e) {
     }
 }, { passive: false });
 
-// Map game IDs to game classes
-const GAME_CLASSES = {
-    'ball-bounce': BallBounceGame,
-    'quick-tap': QuickTapGame,
-    'fruit-slice': FruitSliceGame,
-    'tap-to-jump': TapToJumpGame,
-    'memory-flip': MemoryFlipGame,
-    'stack-tower': StackTowerGame,
-    'dodge-game': DodgeGame,
-    'maze-escape': MazeEscapeGame,
-    'bubble-pop': BubblePopGame,
-    'quiz-blitz': QuizBlitzGame,
-    'color-match-tap': ColorMatchTapGame,
-    'sky-drop': SkyDropGame,
-    'shape-builder': ShapeBuilderGame,
-    'tap-dash': TapDashGame,
-    'balloon-pop-frenzy': BalloonPopFrenzy,
-    // We'll add more games here as we convert them
-};
-
 export function PlaytokGameCanvas({ gameId, onScoreUpdate, onGameEnd }) {
     const canvasRef = useRef(null);
     const containerRef = useRef(null);
     const gameRef = useRef(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [loadingMessage, setLoadingMessage] = useState('Initializing...');
+    const [error, setError] = useState(null);
     const [instructions, setInstructions] = useState('');
 
     // Use a ref to track initialization state
     const initializedRef = useRef(false);
+    
+    // Retry function for failed loads
+    const retryGame = useCallback(() => {
+        setError(null);
+        setIsLoading(true);
+        setLoadingMessage('Retrying...');
+        initializedRef.current = false;
+        // This will trigger the useEffect to re-run
+    }, []);
 
     useEffect(() => {
         if (!gameId) {
@@ -68,15 +46,26 @@ export function PlaytokGameCanvas({ gameId, onScoreUpdate, onGameEnd }) {
 
         console.log('Scheduling game initialization for:', gameId);
         
-        // Use a timeout to ensure the DOM is ready
-        timeoutId = setTimeout(() => {
+        // Use a timeout to ensure the DOM is ready, but make it much shorter for preloaded games
+        const delay = gamePreloader.isPreloaded(gameId) ? 0 : 50;
+        console.log(`Using ${delay}ms delay for ${gameId} (preloaded: ${gamePreloader.isPreloaded(gameId)})`);
+        
+        if (delay === 0) {
+            // No delay for preloaded games - start immediately
+            if (!mounted) return;
+            initGame();
+        } else {
+            timeoutId = setTimeout(() => {
+                if (!mounted) return;
+                initGame();
+            }, delay);
+        }
+
+        async function initGame() {
             if (!mounted) return;
             
-            initGame();
-        }, 100);
-
-        function initGame() {
-            if (!mounted) return;
+            const initStartTime = performance.now();
+            console.log('🚀 Starting game initialization...');
             
             const canvas = canvasRef.current;
             const container = containerRef.current;
@@ -87,21 +76,43 @@ export function PlaytokGameCanvas({ gameId, onScoreUpdate, onGameEnd }) {
                 return;
             }
 
-            const GameClass = GAME_CLASSES[gameId];
-            if (!GameClass) {
-                console.error(`Game class not found for ID: ${gameId}`);
-                setIsLoading(false);
-                return;
-            }
+            try {
+                console.log('⏱️ Step 1: Loading game class...');
+                const stepStart = performance.now();
+                
+                // Check if preloaded
+                if (gamePreloader.isPreloaded(gameId)) {
+                    setLoadingMessage('Starting preloaded game...');
+                    console.log('✅ Game is preloaded!');
+                } else {
+                    setLoadingMessage('Game still loading in background...');
+                    console.log('⚠️ Game not preloaded, loading on demand');
+                }
+                
+                setIsLoading(true);
+                
+                if (!mounted) return;
+                
+                const GameClass = await gamePreloader.getGameClass(gameId);
+                console.log(`⏱️ Step 1 completed: ${(performance.now() - stepStart).toFixed(2)}ms`);
+                
+                if (!mounted) return;
+                
+                setLoadingMessage('Initializing game world...');
+                
+                if (!GameClass) {
+                    console.error(`Game class not found for ID: ${gameId}`);
+                    setIsLoading(false);
+                    setInstructions('Error: Game could not be loaded');
+                    return;
+                }
 
-                try {
-                    console.log('Starting game initialization for:', gameId);
-                    setIsLoading(true);
-                    
-                    if (!mounted) return;
-
+                    console.log('⏱️ Step 2: Setting up canvas...');
+                    const canvasStepStart = performance.now();
                     // Try to get the canvas context with comprehensive error handling
                     let ctx;
+                    setLoadingMessage('Setting up canvas...');
+                    
                     try {
                         if (!canvas) {
                             throw new Error('Canvas element is null or undefined');
@@ -178,19 +189,31 @@ export function PlaytokGameCanvas({ gameId, onScoreUpdate, onGameEnd }) {
                         throw new Error('Could not get canvas context');
                     }
                     
+                    console.log(`⏱️ Step 2 completed: ${(performance.now() - canvasStepStart).toFixed(2)}ms`);
+                    console.log('⏱️ Step 3: Creating game instance...');
+                    const gameCreationStart = performance.now();
+                    
+                    setLoadingMessage('Creating game instance...');
+                    
                     // Create the game instance with proper error handling
                     gameRef.current = new GameClass(canvas, ctx, null, onScoreUpdate);
                     gameRef.current.onGameEnd = onGameEnd;
                     // Store the gameId to help with cleanup decisions
                     gameRef.current.gameId = gameId;
                     
+                    console.log(`⏱️ Step 3 completed: ${(performance.now() - gameCreationStart).toFixed(2)}ms`);
                     console.log('Game instance created successfully');
+                    
+                    setLoadingMessage('Almost ready...');
                     
                     // Mark as initialized
                     initializedRef.current = true;
                     
                     // Get instructions
                     setInstructions(gameRef.current.getInstructions());
+                    
+                    const totalTime = performance.now() - initStartTime;
+                    console.log(`🎯 Total initialization time: ${totalTime.toFixed(2)}ms`);
                 } catch (err) {
                     console.error('Error creating game instance:', err);
                     // Display error message to user
@@ -201,28 +224,55 @@ export function PlaytokGameCanvas({ gameId, onScoreUpdate, onGameEnd }) {
                 
                 console.log('About to set loading to false and start game');
                 
-                // Set loading to false before starting the game
-                console.log('Setting loading to false');
-                setIsLoading(false);
+                // Use flushSync to immediately update the UI and remove loading screen
+                console.log('Setting loading to false with flushSync');
+                flushSync(() => {
+                    setIsLoading(false);
+                });
                 
-                // Start the game immediately after creation, only if we have a valid game instance
-                if (gameRef.current) {
-                    try {
-                        console.log('Starting game...');
-                        gameRef.current.start();
-                        console.log('Game started successfully');
-                    } catch (err) {
-                        console.error('Error starting game:', err);
-                        // Show error in the instructions area
-                        setInstructions('Error starting game: ' + err.message);
+                console.log('Loading state updated, UI should be responsive now');
+                
+                // Use setTimeout to start the game without blocking the UI update
+                setTimeout(() => {
+                    if (gameRef.current && mounted) {
+                        try {
+                            console.log('Starting game...');
+                            gameRef.current.start();
+                            console.log('Game started successfully');
+                        } catch (err) {
+                            console.error('Error starting game:', err);
+                            // Show error in the instructions area
+                            setInstructions('Error starting game: ' + err.message);
+                        }
+                    } else {
+                        console.error('Game instance not created, cannot start');
+                        setInstructions('Error: Game could not be initialized');
                     }
-                } else {
-                    console.error('Game instance not created, cannot start');
-                    setInstructions('Error: Game could not be initialized');
-                }
+                }, 0); // Execute on next tick to avoid blocking
             } catch (error) {
                 console.error('Failed to initialize game:', error);
                 setIsLoading(false);
+                
+                // Handle different types of errors
+                if (error.name === 'ChunkLoadError') {
+                    setError({
+                        type: 'chunk',
+                        message: 'Failed to load game files. Please check your connection and try again.',
+                        retry: true
+                    });
+                } else if (error.message.includes('Failed to load game')) {
+                    setError({
+                        type: 'loading',
+                        message: 'Game temporarily unavailable. Please try again in a moment.',
+                        retry: true
+                    });
+                } else {
+                    setError({
+                        type: 'general',
+                        message: `Error: ${error.message}`,
+                        retry: false
+                    });
+                }
             }
         }
 
@@ -244,7 +294,7 @@ export function PlaytokGameCanvas({ gameId, onScoreUpdate, onGameEnd }) {
                 initializedRef.current = false;
             }
         };
-    }, [gameId, onScoreUpdate, onGameEnd]);
+    }, [gameId, onScoreUpdate, onGameEnd, error]);
 
     const canvasContainerStyle = {
         width: '100%',
@@ -263,10 +313,59 @@ export function PlaytokGameCanvas({ gameId, onScoreUpdate, onGameEnd }) {
         boxShadow: '0 0 10px rgba(0,0,0,0.5)',
     };
 
-    if (isLoading) {
+    // Error state
+    if (error) {
         return (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                <div>Loading game...</div>
+            <div className="game-loading">
+                <div className="error-icon">⚠️</div>
+                <div className="game-loading-text">{error.message}</div>
+                {error.retry && (
+                    <button 
+                        onClick={retryGame}
+                        className="retry-button"
+                        style={{
+                            marginTop: '1rem',
+                            padding: '0.5rem 1rem',
+                            background: 'linear-gradient(145deg, #00ffff, #8a2be2)',
+                            border: 'none',
+                            borderRadius: '5px',
+                            color: '#000',
+                            fontFamily: 'Press Start 2P',
+                            fontSize: '0.6rem',
+                            cursor: 'pointer',
+                            textTransform: 'uppercase'
+                        }}
+                    >
+                        Retry Game
+                    </button>
+                )}
+                <div className="game-loading-tip">
+                    {error.type === 'chunk' ? 
+                        'This usually happens with slow connections. Try refreshing the page if the problem persists.' :
+                        'If this continues, try refreshing the page or contact support.'
+                    }
+                </div>
+            </div>
+        );
+    }
+
+    if (isLoading) {
+        const tips = [
+            "All games are preloaded for instant access!",
+            "Pro tip: Try different difficulty levels",
+            "Did you know? Games auto-save your progress",
+            "Fun fact: Each game has unique physics",
+            "Hint: Look for combo multipliers!",
+            "Games load instantly after preloading completes"
+        ];
+        
+        const randomTip = tips[Math.floor(Math.random() * tips.length)];
+        
+        return (
+            <div className="game-loading">
+                <div className="game-loading-spinner"></div>
+                <div className="game-loading-text">{loadingMessage}</div>
+                <div className="game-loading-tip">{randomTip}</div>
             </div>
         );
     }

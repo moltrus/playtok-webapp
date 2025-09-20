@@ -1,36 +1,33 @@
-import React, { useState, useCallback } from 'react';
+import React, { Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-import { GameProvider, useGame } from './context/GameContext';
-import GameFeed from './components/GameFeed';
-import GamePlayer from './components/GamePlayer';
+import { GameProvider } from './context/GameContext';
 import CoinBar from './components/CoinBar';
 
+// Lazy load pages for code splitting
+const HomePage = React.lazy(() => import('./pages/HomePage'));
+const GamePage = React.lazy(() => import('./pages/GamePage'));
+
+// Loading component
+function LoadingSpinner() {
+  return (
+    <div className="loading-spinner">
+      <div className="spinner"></div>
+      <p>Loading...</p>
+    </div>
+  );
+}
+
 function AppShell() {
-  const [activeGame, setActiveGame] = useState(null);
-  const { playGame, addCoinsPurchase } = useGame();
-
-  const enterGame = useCallback((id) => {
-    console.log('Attempting to enter game:', id);
-    const ok = playGame(id);
-    console.log('playGame result:', ok);
-    if (ok) {
-      setActiveGame(id);
-      console.log('Active game set to:', id);
-    } else {
-      console.log('Failed to start game:', id);
-    }
-  }, [playGame]);
-
-  const exitGame = useCallback(() => setActiveGame(null), []);
-
   return (
     <div className="app-root">
-      <CoinBar onPurchase={addCoinsPurchase} />
-      {activeGame ? (
-        <GamePlayer gameId={activeGame} onExit={exitGame} />
-      ) : (
-        <GameFeed onEnterGame={enterGame} />
-      )}
+      <CoinBar />
+      <Suspense fallback={<LoadingSpinner />}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/game/:gameId" element={<GamePage />} />
+        </Routes>
+      </Suspense>
     </div>
   );
 }
@@ -38,7 +35,9 @@ function AppShell() {
 export default function App() {
   return (
     <GameProvider>
-      <AppShell />
+      <Router>
+        <AppShell />
+      </Router>
     </GameProvider>
   );
 }
