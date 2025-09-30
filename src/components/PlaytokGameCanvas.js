@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { flushSync } from 'react-dom';
 import { gamePreloader } from '../utils/gamePreloader.js';
 

@@ -116,8 +116,8 @@ export class BaseGame {
             console.log('Starting game loop with canvas dimensions:', 
                         this.canvasWidth, 'x', this.canvasHeight);
                         
-            // Start the game loop
-            this.gameLoop();
+            // Start the game loop with requestAnimationFrame to ensure proper timestamp
+            this.animationId = requestAnimationFrame((timestamp) => this.gameLoop(timestamp));
         } catch (error) {
             console.error('Error in game start():', error);
             this.isRunning = false;

@@ -1,28 +1,6 @@
 {
   "games": [
     {
-      "id": "tap-to-jump",
-      "name": "Tap to Jump",
-      "creator": {
-        "username": "@RunnerKid",
-        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23ff6b6b'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3ER%3C/text%3E%3C/svg%3E"
-      },
-      "baseStats": {
-        "plays": 12310,
-        "likes": 4230,
-        "timePlayed": 84,
-        "shares": 890
-      },
-      "lastUpdated": null,
-      "leaderboard": [
-        { "name": "SpeedRunner", "score": 1247 },
-        { "name": "JumpMaster", "score": 1156 },
-        { "name": "QuickFeet", "score": 1089 },
-        { "name": "RunnerPro", "score": 987 },
-        { "name": "FastJump", "score": 923 }
-      ]
-    },
-    {
       "id": "ball-bounce",
       "name": "Ball Bounce",
       "creator": {
@@ -328,28 +306,6 @@
         { "name": "FrenzyKing", "score": 1987 },
         { "name": "BalloonHero", "score": 1834 },
         { "name": "PopGuru", "score": 1721 }
-      ]
-    },
-    {
-      "id": "tilt-maze",
-      "name": "Tilt Maze",
-      "creator": {
-        "username": "@MazeRunner",
-        "avatar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%2303a9f4'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3ET%3C/text%3E%3C/svg%3E"
-      },
-      "baseStats": {
-        "plays": 4320,
-        "likes": 1230,
-        "timePlayed": 56,
-        "shares": 210
-      },
-      "lastUpdated": "2025-09-13",
-      "leaderboard": [
-        { "name": "MazeMaster", "score": 1987 },
-        { "name": "TiltPro", "score": 1834 },
-        { "name": "PathFinder", "score": 1721 },
-        { "name": "MazeHero", "score": 1658 },
-        { "name": "ExitGuru", "score": 1534 }
       ]
     },
     {

@@ -7,7 +7,6 @@ class GamePreloader {
             'ball-bounce',
             'quick-tap', 
             'fruit-slice',
-            'tap-to-jump',
             'memory-flip',
             'stack-tower',
             'dodge-game',
@@ -18,7 +17,7 @@ class GamePreloader {
             'sky-drop',
             'shape-builder',
             'tap-dash',
-            'balloon-pop-frenzy'
+            'balloon-pop-frenzy',
         ];
     }
 
@@ -136,9 +135,6 @@ class GamePreloader {
                     case 'fruit-slice':
                         const { FruitSliceGame } = await import(/* webpackChunkName: "game-fruit-slice" */ '../games/FruitSliceGame.js');
                         return FruitSliceGame;
-                    case 'tap-to-jump':
-                        const { TapToJumpGame } = await import(/* webpackChunkName: "game-tap-to-jump" */ '../games/TapToJumpGame.js');
-                        return TapToJumpGame;
                     case 'memory-flip':
                         const { MemoryFlipGame } = await import(/* webpackChunkName: "game-memory-flip" */ '../games/MemoryFlipGame.js');
                         return MemoryFlipGame;

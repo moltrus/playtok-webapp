@@ -27,7 +27,7 @@ const games = [
   { id: 'orbit-catch', name: 'Orbit Catch', costCoins: 5, rewardCoins: 12, preview: 'orbit-catch.png' },
   { id: 'gravity-flip', name: 'Gravity Flip', costCoins: 8, rewardCoins: 19, preview: 'gravity-flip.png' },
   { id: 'ninja-slice', name: 'Ninja Slice', costCoins: 7, rewardCoins: 16, preview: 'ninja-slice.png' },
-  { id: 'balloon-pop-frenzy', name: 'Balloon Pop Frenzy', costCoins: 6, rewardCoins: 15, preview: 'balloon-pop.png' }
+  { id: 'balloon-pop-frenzy', name: 'Balloon Pop Frenzy', costCoins: 6, rewardCoins: 15, preview: 'balloon-pop.png' },
 ];
 
 export default games;
