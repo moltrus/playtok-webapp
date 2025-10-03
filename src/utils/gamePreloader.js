@@ -1,4 +1,7 @@
 // Game preloader for faster loading times
+// This is a legacy wrapper around the new gameRegistry system
+import { gameRegistry } from './gameRegistry';
+
 class GamePreloader {
     constructor() {
         this.preloadedGames = new Map();
@@ -19,32 +22,34 @@ class GamePreloader {
             'tap-dash',
             'balloon-pop-frenzy',
         ];
+        
+        // Register all games with the registry system
+        if (typeof window !== 'undefined') {
+            gameRegistry.batchRegister(this.allGames);
+        }
     }
 
     // Preload all games in the background
     async preloadAllGames() {
-        console.log('Starting background preload of all games...');
+        console.log('Starting background preload of popular games...');
+        
+        // Only preload the most popular games instead of all games
+        const popularGames = this.allGames.slice(0, 5); // Just preload top 5 games
+        
+        // Set popular games in the registry
+        gameRegistry.setPopularGames(popularGames);
         
         // Show progress indicator
-        this.showPreloadProgress(0, this.allGames.length);
+        this.showPreloadProgress(0, popularGames.length);
         
-        for (let i = 0; i < this.allGames.length; i++) {
-            const gameId = this.allGames[i];
-            try {
-                await this.preloadGame(gameId);
-                // Update progress
-                this.showPreloadProgress(i + 1, this.allGames.length);
-                // Add small delay to not block the main thread
-                await new Promise(resolve => setTimeout(resolve, 200));
-                console.log(`Preloaded: ${gameId} (${i + 1}/${this.allGames.length})`);
-            } catch (error) {
-                console.warn(`Failed to preload game ${gameId}:`, error);
-            }
-        }
+        // Use registry to preload games
+        gameRegistry.preloadPopularGames((loaded, total) => {
+            this.showPreloadProgress(loaded, total);
+        });
         
-        console.log('All games preloaded successfully!');
-        // Hide progress indicator after completion
-        setTimeout(() => this.hidePreloadProgress(), 2000);
+        console.log('Popular games preloaded successfully!');
+        // Hide progress indicator after completion - added longer delay to give time for preloading
+        setTimeout(() => this.hidePreloadProgress(), 5000);
     }
 
     // Show preloading progress indicator
@@ -76,18 +81,17 @@ class GamePreloader {
 
     // Preload a specific game
     async preloadGame(gameId) {
-        if (this.preloadedGames.has(gameId) || this.preloadingGames.has(gameId)) {
-            return this.preloadedGames.get(gameId);
-        }
-
-        this.preloadingGames.add(gameId);
-
+        // Normalize the gameId to handle both underscore and hyphen formats
+        const normalizedId = gameId.replace(/_/g, '-');
+        
+        // Use the registry system to preload
         try {
-            const GameClass = await this.loadGameClass(gameId);
-            this.preloadedGames.set(gameId, GameClass);
+            const GameClass = await gameRegistry.preloadGame(normalizedId);
+            this.preloadedGames.set(normalizedId, GameClass);
             return GameClass;
-        } finally {
-            this.preloadingGames.delete(gameId);
+        } catch (error) {
+            console.error(`Failed to preload game ${normalizedId}:`, error);
+            throw error;
         }
     }
 
@@ -95,25 +99,28 @@ class GamePreloader {
     async getGameClass(gameId) {
         const startTime = performance.now();
         
+        // Normalize the gameId to handle both underscore and hyphen formats
+        const normalizedId = gameId.replace(/_/g, '-');
+        
         // Return preloaded if available (synchronous, instant)
-        if (this.preloadedGames.has(gameId)) {
-            const gameClass = this.preloadedGames.get(gameId);
+        if (this.preloadedGames.has(normalizedId)) {
+            const gameClass = this.preloadedGames.get(normalizedId);
             const loadTime = performance.now() - startTime;
-            console.log(`✅ Using preloaded game: ${gameId} (${loadTime.toFixed(2)}ms)`);
+            console.log(`✅ Using preloaded game: ${normalizedId} (${loadTime.toFixed(2)}ms)`);
             // Return immediately, no await needed
             return gameClass;
         }
 
         // Check if currently preloading
-        if (this.preloadingGames.has(gameId)) {
-            console.log(`⏳ Game ${gameId} is currently being preloaded, waiting...`);
+        if (this.preloadingGames.has(normalizedId)) {
+            console.log(`⏳ Game ${normalizedId} is currently being preloaded, waiting...`);
         }
 
         // Load on demand
-        console.log(`⚠️ Loading game on demand: ${gameId} (preloading may not be complete)`);
-        const gameClass = await this.preloadGame(gameId);
+        console.log(`⚠️ Loading game on demand: ${normalizedId} (preloading may not be complete)`);
+        const gameClass = await this.preloadGame(normalizedId);
         const loadTime = performance.now() - startTime;
-        console.log(`⏱️ On-demand load completed: ${gameId} (${loadTime.toFixed(2)}ms)`);
+        console.log(`⏱️ On-demand load completed: ${normalizedId} (${loadTime.toFixed(2)}ms)`);
         return gameClass;
     }
 
@@ -121,11 +128,14 @@ class GamePreloader {
     async loadGameClass(gameId, retryCount = 3) {
         let lastError;
         
+        // Normalize the gameId to handle both underscore and hyphen formats
+        const normalizedId = gameId.replace(/_/g, '-');
+        
         for (let attempt = 1; attempt <= retryCount; attempt++) {
             try {
-                console.log(`Loading game ${gameId}, attempt ${attempt}/${retryCount}`);
+                console.log(`Loading game ${normalizedId}, attempt ${attempt}/${retryCount}`);
                 
-                switch (gameId) {
+                switch (normalizedId) {
                     case 'ball-bounce':
                         const { BallBounceGame } = await import(/* webpackChunkName: "game-ball-bounce" */ '../games/BallBounceGame.js');
                         return BallBounceGame;
@@ -190,12 +200,14 @@ class GamePreloader {
         }
         
         // If all retries failed, throw the last error
-        throw new Error(`Failed to load game ${gameId} after ${retryCount} attempts: ${lastError.message}`);
+        throw new Error(`Failed to load game ${normalizedId} after ${retryCount} attempts: ${lastError.message}`);
     }
 
     // Check if a game is preloaded
     isPreloaded(gameId) {
-        return this.preloadedGames.has(gameId);
+        // Normalize the gameId to handle both underscore and hyphen formats
+        const normalizedId = gameId.replace(/_/g, '-');
+        return this.preloadedGames.has(normalizedId);
     }
 
     // Get preloading status

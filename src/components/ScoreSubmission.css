@@ -1,0 +1,112 @@
+/* Score Submission Component Styles */
+.score-submission-container {
+  background: rgba(10, 10, 31, 0.8);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.3), 0 0 50px rgba(138, 43, 226, 0.2);
+  border: 1px solid rgba(0, 255, 255, 0.4);
+  max-width: 350px;
+  width: 100%;
+  color: white;
+}
+
+.submission-title {
+  color: rgba(0, 255, 255, 0.9);
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+  font-size: 18px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: rgba(138, 43, 226, 0.9);
+  font-size: 14px;
+}
+
+.neon-text {
+  text-shadow: 0 0 5px rgba(138, 43, 226, 0.6);
+}
+
+.neon-input {
+  width: 100%;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(0, 255, 255, 0.6);
+  border-radius: 4px;
+  color: white;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.neon-input:focus {
+  border-color: rgba(138, 43, 226, 0.8);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+.submit-button {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.2) 0%, rgba(138, 43, 226, 0.2) 100%);
+  border: 2px solid rgba(0, 255, 255, 0.6);
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.submit-button:hover {
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.3) 0%, rgba(138, 43, 226, 0.3) 100%);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.4), 0 0 30px rgba(138, 43, 226, 0.2);
+}
+
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.success-message {
+  background: rgba(0, 200, 0, 0.2);
+  color: rgba(100, 255, 100, 0.9);
+  padding: 15px;
+  text-align: center;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  border: 1px solid rgba(100, 255, 100, 0.3);
+  animation: fadeIn 0.5s ease-in;
+}
+
+.success-icon {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.error-message {
+  background: rgba(255, 0, 0, 0.2);
+  color: rgba(255, 100, 100, 0.9);
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: center;
+  border: 1px solid rgba(255, 100, 100, 0.3);
+  margin-bottom: 15px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

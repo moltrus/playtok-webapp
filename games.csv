@@ -5,7 +5,7 @@
 4,memory_flip,Memory Flip,Puzzle,Flip tiles to match pairs,Tap,40,Win,Match all pairs before timer expires,+10 per correct match; -2 per mismatch,3x3 grid (4 pairs + 1 odd); short flip animation,
 5,quick_tap,Quick Tap,Arcade,Tap correct target among distractors,Tap,30,Survive,Ends on first wrong tap or when timer ends,+1 per correct tap; streak +1 extra every 5,Targets jump position after each hit,
 6,stack_tower,Stack Tower,Arcade,Drop moving block to stack neatly,Tap,30,Survive,Run ends when overlap too small (<4px),+1 per successful layer; narrower blocks = harder,Block width shrinks based on misalignment,
-7,dodge,Dodge,Arcade,Drag avatar to avoid falling hazards,Drag (free),45,Survive,Collision with any obstacle ends run,+1 per frame survived; +10 every 10s,Spawn frequency increases every 10s,
+7,dodge-game,Dodge,Arcade,Drag avatar to avoid falling hazards,Drag (free),45,Survive,Collision with any obstacle ends run,+1 per frame survived; +10 every 10s,Spawn frequency increases every 10s,
 8,maze_escape,Maze Escape,Puzzle,Swipe to move in 5x5 grid,Swipe (4-dir),40,Win,Reach exit cell before timer expires,+50 for exit; +1 per second remaining,Lightweight fixed maze for MVP,
 9,bubble_pop,Bubble Pop,Arcade,Tap bubbles to pop & respawn,Tap,30,Win,"Achieve target score (e.g., 40) before time ends",+2 per pop; +1 bonus if <500ms between pops,Optional targetScore configurable,
 10,quiz_blitz,Quiz Blitz,Trivia,Answer 5 MCQs within time,Tap (choice),50,Win,Answer all questions; session ends after Q5,+10 per correct; show summary at end,10s per question; simple text UI,

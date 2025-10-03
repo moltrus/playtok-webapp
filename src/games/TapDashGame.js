@@ -45,6 +45,24 @@ export class TapDashGame extends BaseGame {
     }
 
     start() {
+        // Validate canvas dimensions before starting
+        if (!this.canvas || !this.ctx) {
+            console.error('Canvas or context not available in start()');
+            return;
+        }
+        
+        // Update logical dimensions to ensure we have the latest canvas size
+        this.updateLogicalDimensions();
+        
+        // Use the logical dimensions (not the physical canvas.width/height which may be DPR-scaled)
+        const width = this.canvasWidth;
+        const height = this.canvasHeight;
+        
+        if (width === 0 || height === 0) {
+            console.error('Canvas has zero dimensions, cannot start game');
+            return;
+        }
+        
         // Initialize timing
         this.lastTime = Date.now();
         this.timeRemaining = this.gameTime;
@@ -59,30 +77,35 @@ export class TapDashGame extends BaseGame {
         };
 
         // Set up grid dimensions based on canvas size
+        // Use logical canvas dimensions for the game area
         const minCellSize = Math.min(
-            Math.floor(this.canvas.width / 8),  // At least 8 cells wide
-            Math.floor(this.canvas.height / 12)  // At least 12 cells high
+            Math.floor(width / 12),  // At least 12 cells wide
+            Math.floor(height / 16)  // At least 16 cells high
         );
         this.grid.cellSize = Math.max(40, minCellSize); // Ensure cells aren't too small
-        this.grid.rows = Math.floor(this.canvas.height / this.grid.cellSize);
-        this.grid.cols = Math.floor(this.canvas.width / this.grid.cellSize);
+        this.grid.rows = Math.floor(height / this.grid.cellSize);
+        this.grid.cols = Math.floor(width / this.grid.cellSize);
         
         console.log('Starting game with dimensions:', 
-                    `Canvas: ${this.canvas.width}x${this.canvas.height}`,
+                    `Canvas: ${width}x${height}`,
                     `Grid: ${this.grid.cols}x${this.grid.rows}`,
                     `Cell size: ${this.grid.cellSize}`);
-                    
-        // Generate the track
-        this.generateTrack();
         
-        // Call super.start() after our initialization
-        super.start();
-
-        // Generate track
+        // Validate grid dimensions
+        if (this.grid.rows === 0 || this.grid.cols === 0) {
+            console.error('Invalid grid dimensions calculated');
+            return;
+        }
+                    
+        // Generate the track (only once)
         this.generateTrack();
 
-        // Place player at starting position
-        this.player.x = this.grid.cellSize / 2; // Center of first cell
+        // Calculate grid position to center it on the canvas
+        this.gridWidth = this.grid.cols * this.grid.cellSize;
+        this.offsetX = (width - this.gridWidth) / 2;
+        
+        // Place player at starting position with offset
+        this.player.x = this.offsetX + (this.grid.cellSize / 2); // Center of first cell
         this.player.y = this.grid.cellSize / 2;
         this.player.direction = 'right';
         this.player.speed = 3; // Start with slower speed for better control
@@ -90,6 +113,9 @@ export class TapDashGame extends BaseGame {
         // Add event listeners
         this.canvas.addEventListener('click', this.handleTap);
         this.canvas.addEventListener('touchstart', this.handleTap);
+        
+        // Call super.start() AFTER all our initialization is complete
+        super.start();
     }
 
     stop() {
@@ -170,6 +196,12 @@ export class TapDashGame extends BaseGame {
     }
 
     placeGems() {
+        // Ensure offsetX is calculated
+        if (this.offsetX === undefined) {
+            this.gridWidth = this.grid.cols * this.grid.cellSize;
+            this.offsetX = (this.canvasWidth - this.gridWidth) / 2;
+        }
+        
         // Initialize gems array if it doesn't exist
         if (!this.grid.gems) {
             this.grid.gems = [];
@@ -232,8 +264,17 @@ export class TapDashGame extends BaseGame {
         e.preventDefault();
         if (!this.isRunning) return;
 
+        // Adjust for the grid offset
+        if (this.offsetX === undefined) {
+            this.gridWidth = this.grid.cols * this.grid.cellSize;
+            this.offsetX = (this.canvas.width - this.gridWidth) / 2;
+        }
+        
+        // Calculate player's position in the grid coordinate system
+        const playerGridX = this.player.x - this.offsetX;
+
         // Check if player is at a corner
-        const cellX = Math.floor(this.player.x / this.grid.cellSize);
+        const cellX = Math.floor(playerGridX / this.grid.cellSize);
         const cellY = Math.floor(this.player.y / this.grid.cellSize);
         
         // Determine available directions at current position
@@ -273,10 +314,16 @@ export class TapDashGame extends BaseGame {
         const deltaTime = currentTime - this.lastTime;
         this.lastTime = currentTime;
         
+        // Ensure offsetX is calculated
+        if (this.offsetX === undefined) {
+            this.gridWidth = this.grid.cols * this.grid.cellSize;
+            this.offsetX = (this.canvasWidth - this.gridWidth) / 2;
+        }
+        
         console.log('Game Update - Position:', 
             `x: ${this.player.x.toFixed(2)}, y: ${this.player.y.toFixed(2)}`,
             'Cell:', 
-            `cellX: ${Math.floor(this.player.x / this.grid.cellSize)}, cellY: ${Math.floor(this.player.y / this.grid.cellSize)}`);
+            `cellX: ${Math.floor((this.player.x - this.offsetX) / this.grid.cellSize)}, cellY: ${Math.floor(this.player.y / this.grid.cellSize)}`);
 
         // Update timers
         this.timeRemaining -= deltaTime;
@@ -317,7 +364,9 @@ export class TapDashGame extends BaseGame {
         const playerCenterY = this.player.y;
         
         // Get the cell coordinates for the player's center
-        const cellX = Math.floor(playerCenterX / this.grid.cellSize);
+        // Adjust for the grid offset
+        const playerGridX = playerCenterX - (this.offsetX || 0);
+        const cellX = Math.floor(playerGridX / this.grid.cellSize);
         const cellY = Math.floor(playerCenterY / this.grid.cellSize);
         
         // Check if we're within valid bounds and on a valid path
@@ -375,8 +424,12 @@ export class TapDashGame extends BaseGame {
                 return true;
             }
 
+            // No need to adjust player X, as the player is already drawn with the offset
+            // But we do need to add the offset to the gem's x position
+            const gemDisplayX = this.offsetX + gem.x;
+            
             const distance = Math.sqrt(
-                Math.pow(this.player.x - gem.x, 2) + 
+                Math.pow(this.player.x - gemDisplayX, 2) + 
                 Math.pow(this.player.y - gem.y, 2)
             );
             
@@ -404,17 +457,25 @@ export class TapDashGame extends BaseGame {
     draw() {
         if (!this.ctx) return;
 
+        // Get logical canvas dimensions
+        const width = this.canvasWidth;
+        const height = this.canvasHeight;
+
         // Clear canvas
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.clearRect(0, 0, width, height);
 
         // Draw background
         this.ctx.fillStyle = '#111111';
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.fillRect(0, 0, width, height);
 
+        // Calculate grid position to center it on the canvas
+        this.gridWidth = this.grid.cols * this.grid.cellSize;
+        this.offsetX = (width - this.gridWidth) / 2;
+        
         // Draw track
         for(let row = 0; row < this.grid.rows; row++) {
             for(let col = 0; col < this.grid.cols; col++) {
-                const x = col * this.grid.cellSize;
+                const x = this.offsetX + col * this.grid.cellSize;
                 const y = row * this.grid.cellSize;
                 
                 // Draw cell border for debugging
@@ -441,22 +502,25 @@ export class TapDashGame extends BaseGame {
             const baseSize = 8;
             const currentSize = baseSize * (gem.scale || 1);
             
+            // Apply offset to gem positions
+            const displayX = this.offsetX + gem.x;
+            
             // Draw glow
             const gradient = this.ctx.createRadialGradient(
-                gem.x, gem.y, 0,
-                gem.x, gem.y, currentSize * 2
+                displayX, gem.y, 0,
+                displayX, gem.y, currentSize * 2
             );
             gradient.addColorStop(0, 'rgba(255, 215, 0, 0.3)');
             gradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
             this.ctx.fillStyle = gradient;
             this.ctx.beginPath();
-            this.ctx.arc(gem.x, gem.y, currentSize * 2, 0, Math.PI * 2);
+            this.ctx.arc(displayX, gem.y, currentSize * 2, 0, Math.PI * 2);
             this.ctx.fill();
 
             // Draw gem
             this.ctx.fillStyle = gem.collected ? 'rgba(255, 215, 0, 0.5)' : '#FFD700';
             this.ctx.beginPath();
-            this.ctx.arc(gem.x, gem.y, currentSize, 0, Math.PI * 2);
+            this.ctx.arc(displayX, gem.y, currentSize, 0, Math.PI * 2);
             this.ctx.fill();
         }
 
@@ -475,7 +539,7 @@ export class TapDashGame extends BaseGame {
         const timeLeft = Math.ceil(this.timeRemaining / 1000);
         this.ctx.textAlign = 'right';
         this.ctx.fillStyle = timeLeft <= 10 ? '#FF4444' : '#FFFFFF';
-        this.ctx.fillText(`Time: ${timeLeft}s`, this.canvas.width - padding, fontSize + padding);
+        this.ctx.fillText(`Time: ${timeLeft}s`, width - padding, fontSize + padding);
         
         // Draw score and stats
         this.ctx.textAlign = 'left';

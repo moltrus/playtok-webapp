@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
 import fallbackGames from '../data/games';
+import { fetchGames, fetchStats } from '../services/gameService';
 
 /*
 GameContext responsibilities:
@@ -29,7 +30,9 @@ const defaultGameStats = (base) => {
 function buildInitialState(gamesSeed) {
   const list = gamesSeed || fallbackGames;
   const state = { coins: 100, games: {} };
-  list.forEach(g => { state.games[g.id] = defaultGameStats(g.base); });
+  // Filter out unwanted games and then create stats
+  list.filter(g => g.id !== 'tap-jump' && g.id !== 'tilt-maze')
+      .forEach(g => { state.games[g.id] = defaultGameStats(g.base); });
   return state;
 }
 
@@ -37,6 +40,9 @@ const GameContext = createContext(null);
 
 export function GameProvider({ children }) {
   const [gamesList, setGamesList] = useState(fallbackGames); // dynamic once stats.json loads
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMoreGames, setHasMoreGames] = useState(true);
   const [state, setState] = useState(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -65,9 +71,12 @@ export function GameProvider({ children }) {
   }, []);
 
   const playGame = useCallback((id) => {
-    const meta = gamesList.find(g => g.id === id);
+    // Normalize the id to handle both underscore and hyphen formats
+    const normalizedId = id.replace(/_/g, '-');
+    
+    const meta = gamesList.find(g => g.id === normalizedId || g.id === id);
     if (!meta) {
-      console.log('Game not found in gamesList:', id);
+      console.log('Game not found in gamesList:', id, 'normalized:', normalizedId);
       return false;
     }
     
@@ -97,7 +106,10 @@ export function GameProvider({ children }) {
   }, [gamesList, state.coins]);
 
   const finishGame = useCallback((id, { won }) => {
-    const meta = gamesList.find(g => g.id === id);
+    // Normalize the id to handle both underscore and hyphen formats
+    const normalizedId = id.replace(/_/g, '-');
+    
+    const meta = gamesList.find(g => g.id === normalizedId || g.id === id);
     if (!meta) return;
     setState(s => ({
       ...s,
@@ -118,6 +130,66 @@ export function GameProvider({ children }) {
     const map = { small: 100, medium: 250, large: 600 };
     adjustCoins(map[bundle] || 0);
   }, [adjustCoins]);
+  
+  // Helper function to transform game data
+  const transformGameData = (game) => {
+    const sessionLength = game.mechanics?.sessionLength ?? 30;
+    const cost = Math.min(10, 5 + Math.floor(sessionLength / 25));
+    const reward = cost * 2 + Math.floor(Math.random() * 3); // slight variation
+    
+    // Normalize the ID with hyphens instead of underscores
+    const normalizedId = game.id.replace(/_/g, '-');
+    
+    return {
+      id: normalizedId, // Use normalized ID with hyphens
+      name: game.name,
+      costCoins: cost,
+      rewardCoins: reward,
+      preview: `/images/${normalizedId}.png`, // Adjust path as needed
+      base: game
+    };
+  };
+  
+  // Load more games function
+  const loadMoreGames = useCallback(async () => {
+    if (!hasMoreGames || isLoadingMore) return;
+    
+    try {
+      setIsLoadingMore(true);
+      const nextPage = currentPage + 1;
+      const gamesResponse = await fetchGames(nextPage, 20);
+      
+      if (gamesResponse.success && Array.isArray(gamesResponse.games)) {
+        // Update pagination state
+        setCurrentPage(gamesResponse.pagination?.currentPage || nextPage);
+        setHasMoreGames(gamesResponse.pagination?.hasMore || false);
+        
+        // Transform and filter the new games
+        const newGames = gamesResponse.games
+          .filter(g => {
+            const normalizedId = g.id.replace(/_/g, '-');
+            return normalizedId !== 'tap-jump' && normalizedId !== 'tilt-maze';
+          })
+          .map(g => transformGameData(g));
+        
+        // Append to existing games list
+        setGamesList(prevGames => [...prevGames, ...newGames]);
+        
+        // Update stats for new games
+        setState(s => {
+          const merged = { ...s.games };
+          newGames.forEach(g => {
+            if (!merged[g.id]) merged[g.id] = defaultGameStats(g.base);
+          });
+          return { ...s, games: merged };
+        });
+      }
+    } catch (error) {
+      console.error('Error loading more games:', error);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [hasMoreGames, isLoadingMore, currentPage]);
 
   // Auto growth effect - less frequent and no player changes
   const growRef = useRef();
@@ -138,28 +210,33 @@ export function GameProvider({ children }) {
     return () => clearInterval(growRef.current);
   }, []);
 
-  // Load external stats.json once (client side)
+  // Load initial games and stats from API
   useEffect(() => {
     let cancelled = false;
-    fetch('/data/stats.json')
-      .then(r => r.ok ? r.json() : Promise.reject(r.status))
-      .then(json => {
+    
+    const loadData = async () => {
+      try {
+        // Fetch games from API with pagination
+        const gamesResponse = await fetchGames(1, 20); // Start with first page
+        
         if (cancelled) return;
-        if (Array.isArray(json.games)) {
-          const transformed = json.games.map(g => {
-            const tp = g.baseStats?.timePlayed ?? 30;
-            const cost = Math.min(10, 5 + Math.floor(tp / 25));
-            const reward = cost * 2 + (g.baseStats?.likes ?? 0) % 3; // slight variation
-            return {
-              id: g.id,
-              name: g.name,
-              costCoins: cost,
-              rewardCoins: reward,
-              preview: `${g.id}.png`,
-              base: g
-            };
-          });
+        
+        if (gamesResponse.success && Array.isArray(gamesResponse.games)) {
+          // Update pagination state
+          setCurrentPage(gamesResponse.pagination?.currentPage || 1);
+          setHasMoreGames(gamesResponse.pagination?.hasMore || false);
+          
+          // Transform API game data to the format we need and filter out unwanted games
+          const transformed = gamesResponse.games
+            .filter(g => {
+              // Filter out unwanted games (with both hyphen and underscore format)
+              const normalizedId = g.id.replace(/_/g, '-');
+              return normalizedId !== 'tap-jump' && normalizedId !== 'tilt-maze';
+            })
+            .map(g => transformGameData(g));
+          
           setGamesList(transformed);
+          
           // Merge stats for any new games
           setState(s => {
             const merged = { ...s.games };
@@ -169,8 +246,39 @@ export function GameProvider({ children }) {
             return { ...s, games: merged };
           });
         }
-      })
-      .catch(() => { /* silent fallback */ });
+        
+        // Fetch stats from API
+        const statsResponse = await fetchStats();
+        
+        if (cancelled) return;
+        
+        if (statsResponse.success && statsResponse.stats && Array.isArray(statsResponse.stats.games)) {
+          // Update game stats with the latest from the server
+          setState(s => {
+            const merged = { ...s.games };
+            
+            statsResponse.stats.games.forEach(g => {
+              if (merged[g.id]) {
+                // Update stats with server data
+                merged[g.id] = {
+                  ...merged[g.id],
+                  likes: g.baseStats?.likes || merged[g.id].likes,
+                  plays: g.baseStats?.plays || merged[g.id].plays,
+                  winners: g.baseStats?.winners || merged[g.id].winners || Math.floor((g.baseStats?.plays || 0) * 0.15)
+                };
+              }
+            });
+            
+            return { ...s, games: merged };
+          });
+        }
+      } catch (error) {
+        console.error('Error loading games or stats:', error);
+        // Silent fallback - we keep using local data
+      }
+    };
+    
+    loadData();
     return () => { cancelled = true; };
   }, []);
 
@@ -181,7 +289,10 @@ export function GameProvider({ children }) {
     likeGame,
     playGame,
     finishGame,
-    addCoinsPurchase
+    addCoinsPurchase,
+    loadMoreGames,
+    hasMoreGames,
+    isLoadingMore
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

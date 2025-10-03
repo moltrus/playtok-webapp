@@ -10,5 +10,12 @@ export default function GamePage() {
     navigate('/');
   };
 
-  return <GamePlayer gameId={gameId} onExit={handleExit} />;
+  return (
+    <div className="game-page">
+      <GamePlayer 
+        gameId={gameId} 
+        onExit={handleExit}
+      />
+    </div>
+  );
 }

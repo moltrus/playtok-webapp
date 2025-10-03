@@ -234,7 +234,15 @@ export class BaseGame {
                 return { width: 320, height: 480 };
             }
             
-            // Try to get dimensions from canvas style first
+            // First, try to get dimensions from dataset (preferred method - set by PlaytokGameCanvas)
+            if (this.canvas.dataset && this.canvas.dataset.logicalWidth && this.canvas.dataset.logicalHeight) {
+                return {
+                    width: parseInt(this.canvas.dataset.logicalWidth),
+                    height: parseInt(this.canvas.dataset.logicalHeight)
+                };
+            }
+            
+            // Try to get dimensions from canvas style
             const styleWidth = this.canvas.style ? parseInt(this.canvas.style.width) : 0;
             const styleHeight = this.canvas.style ? parseInt(this.canvas.style.height) : 0;
             

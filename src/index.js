@@ -4,6 +4,10 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// Clear the cache to ensure we get the latest game data
+// This is a temporary fix to ensure the removed games don't appear
+localStorage.removeItem('playtok_v1_state');
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>

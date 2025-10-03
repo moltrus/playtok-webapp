@@ -9,6 +9,9 @@ export default function GamePlayer({ gameId, onExit }) {
   console.log('Game metadata found:', meta);
   const [status, setStatus] = useState('loading');
   const [score, setScore] = useState(0);
+  const [playerName, setPlayerName] = useState(() => {
+    return localStorage.getItem('playerName') || '';
+  });
 
   
 
@@ -36,7 +39,12 @@ export default function GamePlayer({ gameId, onExit }) {
 
   return (
     <div className="player-wrapper">
-      <div className="player-header">
+      <div className="player-header" style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '0 10px'
+      }}>
         <button onClick={() => handleExit(false)}>Back</button>
         <h2>{meta.name}</h2>
       </div>
@@ -69,11 +77,41 @@ export default function GamePlayer({ gameId, onExit }) {
                 color: '#ffd700', 
                 textShadow: '0 0 12px rgba(255, 215, 0, 0.8)',
                 fontSize: '18px',
-                letterSpacing: '1px'
+                letterSpacing: '1px',
+                marginBottom: '20px'
               }}>Score: {score}</h3>
-              <div className="result-buttons">
-                <button onClick={() => handleExit(true)}>Claim Win</button>
-                <button onClick={() => handleExit(false)}>Exit</button>
+              
+              <div className="result-buttons" style={{
+                display: 'flex',
+                gap: '10px'
+              }}>
+                <button 
+                  onClick={() => handleExit(true)}
+                  style={{
+                    background: 'rgba(0, 255, 255, 0.2)',
+                    border: '2px solid rgba(0, 255, 255, 0.6)',
+                    borderRadius: '4px',
+                    color: '#fff',
+                    padding: '8px 16px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  Continue
+                </button>
+                <button 
+                  onClick={() => handleExit(false)}
+                  style={{
+                    background: 'rgba(255, 100, 100, 0.2)',
+                    border: '2px solid rgba(255, 100, 100, 0.6)',
+                    borderRadius: '4px',
+                    color: '#fff',
+                    padding: '8px 16px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Exit
+                </button>
               </div>
             </div>
           )}

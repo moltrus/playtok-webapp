@@ -156,21 +156,28 @@ export function PlaytokGameCanvas({ gameId, onScoreUpdate, onGameEnd }) {
                 finalWidth = Math.max(finalWidth, 320);
                 finalHeight = Math.max(finalHeight, 480);
                 
-                // Set both the actual canvas size and its CSS size
-                canvas.width = finalWidth;
-                canvas.height = finalHeight;
-                canvas.style.width = `${finalWidth}px`;
-                canvas.style.height = `${finalHeight}px`;
-                
                 // Get device pixel ratio for high-DPI displays
                 const dpr = window.devicePixelRatio || 1;
                 
-                // For high-DPI displays, increase canvas resolution
+                // Set both the actual canvas size and its CSS size
+                // Important: Store the logical dimensions before DPR scaling
+                canvas.style.width = `${finalWidth}px`;
+                canvas.style.height = `${finalHeight}px`;
+                
+                // For high-DPI displays, increase canvas resolution but maintain logical size
+                canvas.width = finalWidth * dpr;
+                canvas.height = finalHeight * dpr;
+                
+                // Scale the context to handle DPR automatically
                 if (dpr > 1) {
-                    canvas.width = finalWidth * dpr;
-                    canvas.height = finalHeight * dpr;
                     ctx.scale(dpr, dpr);
                 }
+                
+                // Store logical dimensions on the canvas for games to use
+                canvas.dataset.logicalWidth = finalWidth;
+                canvas.dataset.logicalHeight = finalHeight;
+                
+                console.log(`Canvas setup: Logical ${finalWidth}x${finalHeight}, Physical ${canvas.width}x${canvas.height}, DPR ${dpr}`);
 
                 // Create game instance - always create a new one for proper initialization
                 if (gameRef.current) {
