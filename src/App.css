@@ -484,7 +484,7 @@ html, body, #root, .app-root {
 }
 
 .player-wrapper { 
-  height: 100%; 
+  min-height: 100vh; 
   padding-top: max(48px, env(safe-area-inset-top)); 
   display: flex; 
   flex-direction: column;
@@ -556,13 +556,26 @@ html, body, #root, .app-root {
     inset 0 -1px 0 rgba(0, 0, 0, 0.2);
 }
 .player-surface { 
-  flex: 1; 
   display: flex; 
   flex-direction: column; 
   align-items: center; 
   justify-content: center; 
-  padding: 20px env(safe-area-inset-right, 20px) max(20px, env(safe-area-inset-bottom)) env(safe-area-inset-left, 20px);
-  text-align: center; 
+  padding: 20px env(safe-area-inset-right, 20px) 20px env(safe-area-inset-left, 20px);
+  text-align: center;
+  min-height: calc(100vh - 120px);
+}
+
+/* Responsive adjustments for different screen sizes */
+@media (max-width: 480px) {
+  .player-surface {
+    padding: 10px;
+  }
+}
+
+@media (min-width: 768px) {
+  .player-surface {
+    padding: 40px;
+  }
 }
 .result-buttons { 
   display: flex; 
@@ -604,24 +617,6 @@ html, body, #root, .app-root {
     0 1px 4px rgba(0, 255, 136, 0.8),
     0 0 15px rgba(0, 255, 255, 0.6),
     inset 0 -1px 0 rgba(0, 0, 0, 0.2);
-}
-.ad-slot { 
-  height: max(70px, calc(70px + env(safe-area-inset-bottom))); 
-  background: 
-    linear-gradient(135deg, 
-      rgba(26, 10, 45, 0.8) 0%, 
-      rgba(15, 10, 26, 0.9) 30%, 
-      rgba(45, 26, 61, 0.8) 70%, 
-      rgba(10, 10, 31, 0.9) 100%);
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  font-size: 14px;
-  font-family: 'VT323', monospace;
-  color: #00ffff;
-  border-top: 2px solid rgba(0, 255, 255, 0.6);
-  padding-bottom: env(safe-area-inset-bottom, 0);
-  text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
 }
 
 /* Hide default scrollbars for neon mobile feel */

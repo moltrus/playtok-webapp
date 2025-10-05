@@ -9,9 +9,9 @@ export default function GamePlayer({ gameId, onExit }) {
   console.log('Game metadata found:', meta);
   const [status, setStatus] = useState('loading');
   const [score, setScore] = useState(0);
-  const [playerName, setPlayerName] = useState(() => {
-    return localStorage.getItem('playerName') || '';
-  });
+  // const [playerName, setPlayerName] = useState(() => {
+  //   return localStorage.getItem('playerName') || '';
+  // });
 
   
 
@@ -48,13 +48,29 @@ export default function GamePlayer({ gameId, onExit }) {
         <button onClick={() => handleExit(false)}>Back</button>
         <h2>{meta.name}</h2>
       </div>
-      <div className="player-surface" style={{padding:0}}>
-        <div style={{width:'100%', maxWidth:480, aspectRatio:'9/16', position:'relative'}}>
+      <div className="player-surface" style={{padding: '20px', flex: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 120px)'}}>
+        <div style={{width:'100%', maxWidth:480, aspectRatio:'9/16', position:'relative', margin: '0 auto'}}>
           <PlaytokGameCanvas 
             gameId={gameId}
             onScoreUpdate={handleScoreUpdate}
             onGameEnd={handleGameEnd}
           />
+          
+          {/* Preload indicator positioned within the game canvas */}
+          <div id="preload-indicator" style={{
+            position: 'absolute',
+            top: '10px',
+            right: '10px',
+            background: 'rgba(0, 0, 0, 0.7)',
+            color: '#00ffff',
+            padding: '5px 10px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            fontFamily: 'VT323, monospace',
+            border: '1px solid rgba(0, 255, 255, 0.3)',
+            zIndex: 10,
+            display: 'none'
+          }}>Loading...</div>
           
           {status === 'ended' && (
             <div style={{
@@ -117,7 +133,6 @@ export default function GamePlayer({ gameId, onExit }) {
           )}
         </div>
       </div>
-      <div className="ad-slot">Ad Placeholder</div>
     </div>
   );
 }
