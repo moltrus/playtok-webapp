@@ -6,4 +6,9 @@
 
 ## API Documentation
 
-For detailed information about the `/api/games` endpoint and how it works, see [API_DOCUMENTATION.md](./API_DOCUMENTATION.md).
+### Understanding the /api/games Endpoint
+
+The `/api/games` endpoint serves game metadata from a CSV file to the frontend application.
+
+- **Quick Overview**: [API_GAMES_SUMMARY.md](./API_GAMES_SUMMARY.md) - Simple explanation with diagrams
+- **Full Technical Documentation**: [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) - Complete API reference with examples
