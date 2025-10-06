@@ -29,6 +29,7 @@ class GamePreloader {
 
     async preloadAllGames() {
         console.log('Starting background preload of popular games...');
+        const popularGames = this.allGames.slice(0, 5);
         gameRegistry.setPopularGames(popularGames);
         this.showPreloadProgress(0, popularGames.length);
         gameRegistry.preloadPopularGames((loaded, total) => {
