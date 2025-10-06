@@ -519,7 +519,7 @@ html, body, #root, .app-root {
   align-items: center;
   gap: 2px;
   transition: transform 0.1s ease;
-  font-size: 32px; /* Increased for better visibility */
+  font-size: 38px;
   color: #fff;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
 }
@@ -538,7 +538,7 @@ html, body, #root, .app-root {
     font-size: 16px;
   }
   .like-btn {
-    font-size: 38px;
+    font-size: 44px;
     gap: 4px;
   }
 }

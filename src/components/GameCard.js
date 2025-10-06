@@ -41,10 +41,6 @@ export default function GameCard({ game, onPlay }) {
             <span className="stat-count">{stats.plays}</span>
           </div>
           <div className="stat-item">
-            <span className="stat-icon">🧑</span>
-            <span className="stat-count">{stats.players}</span>
-          </div>
-          <div className="stat-item">
             <span className="stat-icon">🏆</span>
             <span className="stat-count">{stats.winners}</span>
           </div>

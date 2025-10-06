@@ -9,6 +9,7 @@ export default function GamePlayer({ gameId, onExit }) {
   console.log('Game metadata found:', meta);
   const [status, setStatus] = useState('loading');
   const [score, setScore] = useState(0);
+  const [gameKey, setGameKey] = useState(0); // Add key to force remount
   // const [playerName, setPlayerName] = useState(() => {
   //   return localStorage.getItem('playerName') || '';
   // });
@@ -20,6 +21,12 @@ export default function GamePlayer({ gameId, onExit }) {
   function handleGameEnd(finalScore) {
     setScore(finalScore || score);
     setStatus('ended');
+  }
+
+  function handleReplay() {
+    setScore(0);
+    setStatus('running');
+    setGameKey(prev => prev + 1); // Increment key to force remount
   }
 
   function handleExit(win) {
@@ -49,6 +56,7 @@ export default function GamePlayer({ gameId, onExit }) {
       <div className="player-surface" style={{padding: '20px', flex: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 120px)'}}>
         <div style={{width:'100%', maxWidth:480, aspectRatio:'9/16', position:'relative', margin: '0 auto'}}>
           <PlaytokGameCanvas 
+            key={gameKey}
             gameId={gameId}
             onScoreUpdate={handleScoreUpdate}
             onGameEnd={handleGameEnd}
@@ -97,18 +105,20 @@ export default function GamePlayer({ gameId, onExit }) {
                 gap: '10px'
               }}>
                 <button 
-                  onClick={() => handleExit(true)}
+                  onClick={handleReplay}
                   style={{
-                    background: 'rgba(0, 255, 255, 0.2)',
-                    border: '2px solid rgba(0, 255, 255, 0.6)',
+                    background: 'rgba(0, 255, 136, 0.2)',
+                    border: '2px solid rgba(0, 255, 136, 0.6)',
                     borderRadius: '4px',
-                    color: '#fff',
+                    color: '#00ff88',
                     padding: '8px 16px',
                     cursor: 'pointer',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
+                    fontFamily: 'Press Start 2P, monospace',
+                    fontSize: '12px'
                   }}
                 >
-                  Continue
+                  Replay
                 </button>
                 <button 
                   onClick={() => handleExit(false)}
