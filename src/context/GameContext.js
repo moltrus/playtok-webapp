@@ -29,7 +29,7 @@ const defaultGameStats = (base) => {
 
 function buildInitialState(gamesSeed) {
   const list = gamesSeed || fallbackGames;
-  const state = { coins: 100, games: {} };
+  const state = { coins: 100, games: {}, likedGames: new Set() };
   list.filter(g => g.id !== 'tap-jump' && g.id !== 'tilt-maze')
       .forEach(g => { state.games[g.id] = defaultGameStats(g.base); });
   return state;
@@ -45,13 +45,29 @@ export function GameProvider({ children }) {
   const [state, setState] = useState(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) return JSON.parse(raw);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        // Convert likedGames array back to Set
+        if (parsed.likedGames && Array.isArray(parsed.likedGames)) {
+          parsed.likedGames = new Set(parsed.likedGames);
+        } else {
+          parsed.likedGames = new Set();
+        }
+        return parsed;
+      }
     } catch (e) {  }
     return buildInitialState(fallbackGames);
   });
 
   useEffect(() => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {  }
+    try { 
+      // Convert Set to array for JSON serialization
+      const stateToSave = {
+        ...state,
+        likedGames: Array.from(state.likedGames || [])
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave)); 
+    } catch (e) {  }
   }, [state]);
 
   const adjustCoins = useCallback((delta) => {
@@ -59,13 +75,34 @@ export function GameProvider({ children }) {
   }, []);
 
   const likeGame = useCallback((id) => {
-    setState(s => ({
-      ...s,
-      games: {
-        ...s.games,
-        [id]: { ...s.games[id], likes: s.games[id].likes + 1 }
+    setState(s => {
+      const likedGames = new Set(s.likedGames || []);
+      const isCurrentlyLiked = likedGames.has(id);
+      
+      if (isCurrentlyLiked) {
+        // Unlike: remove from set and decrement count
+        likedGames.delete(id);
+        return {
+          ...s,
+          likedGames,
+          games: {
+            ...s.games,
+            [id]: { ...s.games[id], likes: Math.max(0, s.games[id].likes - 1) }
+          }
+        };
+      } else {
+        // Like: add to set and increment count
+        likedGames.add(id);
+        return {
+          ...s,
+          likedGames,
+          games: {
+            ...s.games,
+            [id]: { ...s.games[id], likes: s.games[id].likes + 1 }
+          }
+        };
       }
-    }));
+    });
   }, []);
 
   const playGame = useCallback((id) => {
@@ -259,6 +296,7 @@ export function GameProvider({ children }) {
     coins: state.coins,
     gameStats: state.games,
     games: gamesList,
+    likedGames: state.likedGames || new Set(),
     likeGame,
     playGame,
     finishGame,

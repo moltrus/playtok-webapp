@@ -277,19 +277,27 @@ html, body, #root, .app-root {
 
 .feed-container {
   scroll-snap-type: y mandatory;
-  height: 100%;
+  height: 100vh;
+  height: 100dvh; /* Use dynamic viewport height for mobile */
   overflow-y: scroll;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+}
+
+.feed-container::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome/Safari */
 }
 
 .feed-slide {
   scroll-snap-align: start;
-  min-height: 100%;
+  min-height: 100vh;
+  min-height: 100dvh; /* Use dynamic viewport height for mobile */
   display: flex;
-  align-items: center;
+  align-items: stretch; /* Changed from center to stretch */
   justify-content: center;
-  padding: 60px 16px 40px; /* top space for coin bar */
+  padding: 60px 8px 12px; /* Reduced top/bottom padding */
   box-sizing: border-box;
   width: 100%;
   overflow: hidden;
@@ -297,55 +305,73 @@ html, body, #root, .app-root {
 
 .game-card {
   width: 100%;
-  max-width: 480px;
-  background: 
-    linear-gradient(145deg, 
-      rgba(26, 10, 45, 0.85) 0%, 
-      rgba(15, 10, 26, 0.9) 30%, 
-      rgba(45, 26, 61, 0.85) 70%, 
-      rgba(10, 10, 31, 0.9) 100%);
-  border-radius: 12px;
-  padding: 20px 18px 24px;
+  max-width: calc(100% - 16px); /* Account for margins on mobile */
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  box-shadow: 
-    0 8px 32px rgba(138, 43, 226, 0.4),
-    0 0 0 2px rgba(0, 255, 255, 0.5),
-    0 0 20px rgba(0, 255, 255, 0.3),
-    inset 0 1px 0 rgba(0, 255, 255, 0.2);
-  border: 1px solid rgba(0, 255, 255, 0.6);
+  flex: 1; /* Allow card to grow and fill available space */
   margin: 0;
-  backdrop-filter: blur(8px) saturate(1.5);
   position: relative;
   box-sizing: border-box;
 }
-.game-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    linear-gradient(transparent 50%, rgba(0, 255, 255, 0.03) 50%);
-  background-size: 100% 2px;
-  border-radius: 12px;
-  pointer-events: none;
+
+/* Larger screens */
+@media (min-width: 768px) {
+  .game-card {
+    max-width: 480px;
+    flex: 0 1 auto; /* Don't stretch on larger screens */
+  }
+  .feed-slide {
+    padding: 60px 16px 40px;
+    align-items: center; /* Center on larger screens */
+  }
+}
+
+.preview-container {
+  width: 100%;
+  height: 100%; /* Fill parent height */
+  position: relative;
+  padding: 12px; /* Reduced padding for mobile */
+  background: #000;
+  border-radius: 12px; /* Slightly smaller border radius for mobile */
+  overflow: hidden;
+  box-shadow: 
+    0 8px 32px rgba(138, 43, 226, 0.4),
+    0 0 0 3px rgba(0, 255, 255, 0.5),
+    0 0 25px rgba(0, 255, 255, 0.4);
+  border: 3px solid rgba(0, 255, 255, 0.6);
+  margin: 0 4px; /* Add margin to prevent border cutoff */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Larger screens */
+@media (min-width: 768px) {
+  .preview-container {
+    padding: 16px;
+    border-radius: 16px;
+    margin: 0;
+    height: auto; /* Auto height on larger screens */
+  }
+}
+
+.card-content {
+  display: none; /* Deprecated, using preview-container now */
 }
 .preview-wrapper { 
-  width: 100%; 
-  display: flex; 
-  justify-content: center; 
-  margin-bottom: 20px;
-  padding: 0;
-  box-sizing: border-box;
-  overflow: hidden;
+  display: none; /* Deprecated */
 }
+.stats-sidebar {
+  display: none; /* Deprecated */
+  align-items: center;
 .preview-thumb {
   width: 100%;
-  max-width: 100%;
-  aspect-ratio: 9/16;
-  border-radius: 8px;
+  flex: 1; /* Fill available height */
+  min-height: 0; /* Allow flexbox to shrink if needed */
+  border-radius: 0;
   background: 
     linear-gradient(135deg, #8a2be2 0%, #4b0082 30%, #9370db 60%, #6a5acd 100%);
   position: relative;
@@ -353,52 +379,261 @@ html, body, #root, .app-root {
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: scale(.85);
-  transform-origin: center;
-  box-shadow: 
-    0 0 0 3px rgba(138, 43, 226, 0.6),
-    0 8px 16px rgba(138, 43, 226, 0.4),
-    0 0 30px rgba(0, 255, 255, 0.2),
-    inset 0 0 20px rgba(0, 255, 255, 0.1);
   transition: all 0.2s ease;
-  border: 2px solid #00ffff;
+  border: none;
   box-sizing: border-box;
 }
-.preview-thumb:active {
-  transform: scale(.82);
-  box-shadow: 
-    0 0 0 3px rgba(138, 43, 226, 0.8),
-    0 4px 8px rgba(138, 43, 226, 0.6),
-    0 0 40px rgba(0, 255, 255, 0.4),
-    inset 0 0 20px rgba(0, 255, 255, 0.2);
+
+/* Larger screens - maintain aspect ratio */
+@media (min-width: 768px) {
+  .preview-thumb {
+    flex: 0 0 auto;
+    aspect-ratio: 9/16;
+  }
+} justify-content: center;
+  transition: all 0.2s ease;
+  border: none;
+  box-sizing: border-box;
+}
+.preview-thumb.clickable {
+  cursor: pointer;
+}
+.preview-thumb.clickable:hover .preview-inner {
+  background: rgba(0, 255, 136, 0.1);
+}
+.preview-thumb.clickable:active .preview-inner {
+  background: rgba(0, 255, 136, 0.2);
+}
+.preview-thumb.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 .preview-inner { 
-  font-size: clamp(12px, 4vw, 20px);
-  font-weight: 900; 
-  color: #00ffff;
-  text-shadow: 0 0 8px rgba(0, 255, 255, 0.8);
-  font-family: 'Press Start 2P', monospace;
-  text-align: center;
-  padding: 8px;
-  word-break: break-word;
-  line-height: 1.2;
+  display: none; /* No longer needed */
 }
 
-.game-meta h2 { 
-  margin: 0 0 12px; 
-  font-size: 24px; 
+.play-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  padding: 10px 20px;
+  background: rgba(0, 255, 136, 0.15);
+  border: 3px solid #00ff88;
+  border-radius: 8px;
+  color: #00ff88;
   font-family: 'Press Start 2P', monospace;
-  color: #ffd700;
-  text-shadow: 0 0 12px rgba(255, 215, 0, 0.8);
-  letter-spacing: 1px;
+  text-shadow: 
+    0 0 15px rgba(0, 255, 136, 0.9),
+    0 0 30px rgba(0, 255, 136, 0.6);
+  box-shadow: 
+    0 0 30px rgba(0, 255, 136, 0.6),
+    0 0 60px rgba(0, 255, 136, 0.4),
+    inset 0 0 20px rgba(0, 255, 136, 0.1);
+  animation: pulse 2s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  z-index: 5;
+  white-space: nowrap;
 }
-.coin-line { 
-  font-size: 14px; 
-  margin-bottom: 12px; 
+
+.preview-thumb.disabled .play-indicator {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #666;
+  color: #999;
+  text-shadow: none;
+  box-shadow: none;
+  animation: none;
+  font-size: 12px;
+}
+
+/* Larger screens */
+@media (min-width: 768px) {
+  .play-indicator {
+    font-size: 16px;
+    padding: 12px 24px;
+    border-radius: 10px;
+  }
+  .preview-thumb.disabled .play-indicator {
+    font-size: 14px;
+  }
+}
+.preview-thumb.disabled .play-indicator {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #666;
+  color: #999;
+  text-shadow: none;
+  animation: none;
+}
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.8);
+  }
+}
+
+/* Instagram Reels-style stats overlay on right edge */
+.stats-overlay {
+  position: absolute;
+  right: 8px; /* Closer to edge on mobile */
+  bottom: 70px; /* Adjusted for mobile */
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Slightly reduced gap */
+  align-items: center;
+  z-index: 10;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.stat-icon {
+  font-size: 32px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+.stat-count {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  font-family: 'VT323', monospace;
+}
+
+.like-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  transition: transform 0.1s ease;
+  font-size: 32px; /* Increased for better visibility */
+  color: #fff;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+/* Larger screens */
+@media (min-width: 768px) {
+  .stats-overlay {
+    right: 12px;
+    bottom: 80px;
+    gap: 20px;
+  }
+  .stat-icon {
+    font-size: 36px;
+  }
+  .stat-count {
+    font-size: 16px;
+  }
+  .like-btn {
+    font-size: 38px;
+    gap: 4px;
+  }
+}
+
+.like-btn.liked {
+  color: #ff1744;
+  filter: drop-shadow(0 0 8px rgba(255, 23, 68, 0.8)) drop-shadow(0 0 16px rgba(255, 23, 68, 0.6));
+  animation: heartPulse 0.3s ease;
+}
+
+@keyframes heartPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* Instagram Reels-style game info overlay at bottom */
+.game-info-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px; /* Reduced padding for mobile */
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 70%, transparent 100%);
+  z-index: 9;
+  pointer-events: none;
+}
+
+.game-info-overlay h2 { 
+  margin: 0 0 6px 0; 
+  font-size: 16px; /* Increased for better readability */
+  font-family: 'Press Start 2P', monospace;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+}
+
+.game-info-overlay .coin-line { 
+  font-size: 15px; /* Increased for better readability */
+  margin: 0; 
   color: #ffd700;
   font-family: 'VT323', monospace;
-  font-size: 18px;
-  text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* Larger screens */
+@media (min-width: 768px) {
+  .game-info-overlay {
+    padding: 16px;
+  }
+  .game-info-overlay h2 {
+    font-size: 20px;
+    margin: 0 0 8px 0;
+  }
+  .game-info-overlay .coin-line {
+    font-size: 18px;
+  }
+}
+
+/* Deprecated old layout styles */
+
+/* Deprecated old layout styles */
+.card-content {
+  display: none; /* Deprecated, using preview-container now */
+}
+.preview-wrapper { 
+  display: none; /* Deprecated */
+}
+.stats-sidebar {
+  display: none; /* Deprecated */
+}
+.stats-column {
+  display: none; /* Deprecated */
+}
+.game-meta {
+  display: none; /* Deprecated, using game-info-overlay now */
+}
+.meta-left {
+  display: none; /* Deprecated */
+}
+.meta-right {
+  display: none; /* Deprecated */
+}
+.stats-column { 
+  display: flex; 
+  flex-direction: column;
+  gap: 8px; 
+  font-size: 14px; 
+  font-family: 'VT323', monospace;
+  color: #00ffff;
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.6);
+  align-items: center;
+}
+.stats-column span {
+  white-space: nowrap;
 }
 .stats-row { 
   display: flex; 
@@ -413,10 +648,12 @@ html, body, #root, .app-root {
 .actions { 
   display: flex; 
   gap: 16px; 
+  justify-content: center;
 }
 .actions button { 
-  flex: 1; 
-  padding: 12px 16px; 
+  flex: 0 1 auto;
+  min-width: 120px;
+  padding: 12px 20px; 
   border: 2px solid;
   border-radius: 6px; 
   font-weight: 900;
@@ -426,31 +663,7 @@ html, body, #root, .app-root {
   transition: all 0.1s ease;
   cursor: pointer;
 }
-.like-btn { 
-  background: linear-gradient(145deg, #4b0082, #2d1b69);
-  color: #00ffff;
-  border-color: #8a2be2;
-  box-shadow: 
-    0 4px 12px rgba(75, 0, 130, 0.4),
-    0 0 20px rgba(138, 43, 226, 0.3),
-    inset 0 1px 0 rgba(0, 255, 255, 0.1);
-}
-.like-btn:hover {
-  background: linear-gradient(145deg, #6a5acd, #4b0082);
-  color: #00ffff;
-  border-color: #9370db;
-  box-shadow: 
-    0 2px 8px rgba(75, 0, 130, 0.6),
-    0 0 30px rgba(138, 43, 226, 0.5),
-    inset 0 1px 0 rgba(0, 255, 255, 0.2);
-}
-.like-btn:active {
-  transform: translateY(1px);
-  box-shadow: 
-    0 1px 4px rgba(75, 0, 130, 0.8),
-    0 0 15px rgba(138, 43, 226, 0.6),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
-}
+/* Deprecated old like button styles - removed */
 .play-btn { 
   background: linear-gradient(145deg, #00ff88, #00cc66);
   color: #0a0a1f;
