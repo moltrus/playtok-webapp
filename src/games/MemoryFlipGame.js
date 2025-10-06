@@ -295,6 +295,7 @@ export class MemoryFlipGame extends BaseGame {
                 case 'fox': emoji = '🦊'; break;
                 case 'panda': emoji = '🐼'; break;
                 case 'bear': emoji = '🐻'; break;
+                default: emoji = '🐱'; break;
             }
             
             this.ctx.font = '28px Arial';

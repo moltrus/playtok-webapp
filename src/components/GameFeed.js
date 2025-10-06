@@ -1,12 +1,11 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState } from 'react';
 import GameCard from './GameCard';
 import { useGame } from '../context/GameContext';
-import { fetchGames } from '../services/gameService';
 
 export default function GameFeed({ onEnterGame }) {
   const { games } = useGame();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [loading] = useState(false);
+  const [error] = useState('');
 
   const handlePlay = useCallback((id) => {
     onEnterGame(id);

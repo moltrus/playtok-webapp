@@ -1,7 +1,7 @@
 import { useGame } from '../context/GameContext';
 
 export default function CoinBar() {
-  const { coins, addCoinsPurchase } = useGame();
+  const { coins } = useGame();
   
   return (
     <div className="coin-bar">

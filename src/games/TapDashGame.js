@@ -301,6 +301,9 @@ export class TapDashGame extends BaseGame {
                 if(canGoLeft) this.player.direction = 'left';
                 else if(canGoRight) this.player.direction = 'right';
                 break;
+            default:
+                this.player.direction = 'right';
+                break;
         }
 
         this.gameState.turns++;
@@ -356,6 +359,10 @@ export class TapDashGame extends BaseGame {
                 break;
             case 'down':
                 this.player.y += this.player.speed;
+                break;
+            default:
+                // If unknown direction, move right by default
+                this.player.x += this.player.speed;
                 break;
         }
 

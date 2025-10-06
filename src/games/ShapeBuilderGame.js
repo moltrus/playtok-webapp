@@ -360,6 +360,15 @@ export class ShapeBuilderGame extends BaseGame {
             case 'hexagon':
                 this.drawPolygon(x + width / 2, y + height / 2, 6, width / 2, isOutline);
                 break;
+
+            default:
+                if (isOutline) {
+                    this.ctx.strokeRect(x, y, width, height);
+                } else {
+                    this.ctx.fillRect(x, y, width, height);
+                    this.ctx.strokeRect(x, y, width, height);
+                }
+                break;
         }
     }
     
