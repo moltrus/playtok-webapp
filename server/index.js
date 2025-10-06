@@ -1,8 +1,12 @@
-const express = require('express');
-const cors = require('cors');
-const path = require('path');
-const gamesRoutes = require('./routes/games').default;
-const statsRoutes = require('./routes/stats');
+import express from 'express';
+import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import gamesRoutes from './routes/games.js';
+import statsRoutes from './routes/stats.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -35,7 +39,7 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-app.use((err, req, res, next) => {
+app.use((err, _req, res, _next) => {
   console.error(err.stack);
   res.status(500).json({
     success: false,

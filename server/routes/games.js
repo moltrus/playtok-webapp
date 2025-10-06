@@ -2,7 +2,14 @@ import { Router } from 'express';
 const router = Router();
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
-import { parseGamesCsv } from '../utils/parser';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import parser from '../utils/parser.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const { parseGamesCsv } = parser;
 
 router.get('/', async (req, res) => {
   try {
