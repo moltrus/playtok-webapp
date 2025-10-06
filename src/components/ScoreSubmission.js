@@ -19,44 +19,31 @@ const ScoreSubmission = ({ gameId, initialScore = 0, onSubmitSuccess, onCancel }
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  // Update score if initialScore changes
   useEffect(() => {
     setScore(initialScore);
   }, [initialScore]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validation
     if (!playerName.trim()) {
       setError('Please enter your name');
       return;
     }
-    
     if (!gameId) {
       setError('Game ID is missing');
       return;
     }
-    
     if (score <= 0) {
       setError('Score must be greater than zero');
       return;
     }
-    
     try {
       setSubmitting(true);
       setError('');
-      
-      // Save player name to localStorage
       localStorage.setItem('playerName', playerName);
-      
-      // Submit the score
       const response = await submitScore(playerName, gameId, score);
-      
       if (response.success) {
         setSuccess(true);
-        
-        // Call success callback if provided
         if (onSubmitSuccess) {
           onSubmitSuccess({
             player: playerName,
@@ -64,8 +51,6 @@ const ScoreSubmission = ({ gameId, initialScore = 0, onSubmitSuccess, onCancel }
             score: score
           });
         }
-        
-        // Reset after 2 seconds
         setTimeout(() => {
           if (onCancel) onCancel();
         }, 2000);
@@ -98,7 +83,6 @@ const ScoreSubmission = ({ gameId, initialScore = 0, onSubmitSuccess, onCancel }
       }}>
         Submit Your Score
       </h3>
-      
       {success ? (
         <div className="success-message" style={{
           background: 'rgba(0, 200, 0, 0.2)',
@@ -134,7 +118,6 @@ const ScoreSubmission = ({ gameId, initialScore = 0, onSubmitSuccess, onCancel }
               {error}
             </div>
           )}
-          
           <div className="form-group" style={{
             display: 'flex',
             flexDirection: 'column',
@@ -163,7 +146,6 @@ const ScoreSubmission = ({ gameId, initialScore = 0, onSubmitSuccess, onCancel }
               maxLength={20}
             />
           </div>
-          
           <div className="form-group" style={{
             display: 'flex',
             flexDirection: 'column',
@@ -190,7 +172,6 @@ const ScoreSubmission = ({ gameId, initialScore = 0, onSubmitSuccess, onCancel }
               }}
             />
           </div>
-          
           <div className="form-actions" style={{
             display: 'flex',
             gap: '10px',
@@ -215,7 +196,6 @@ const ScoreSubmission = ({ gameId, initialScore = 0, onSubmitSuccess, onCancel }
                 Cancel
               </button>
             )}
-            
             <button
               type="submit"
               disabled={submitting || success}

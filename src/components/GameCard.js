@@ -1,4 +1,3 @@
-import React from 'react';
 import { useGame } from '../context/GameContext';
 
 export default function GameCard({ game, onPlay }) {
@@ -22,7 +21,7 @@ export default function GameCard({ game, onPlay }) {
           <span>▶️ {stats.plays}</span>
           <span>🧑 {stats.players}</span>
           <span>🏆 {stats.winners}</span>
-          <span>🪙 {stats.coinsSpent}</span>
+          <span>💸 {stats.coinsSpent}</span>
         </div>
         <div className="actions">
           <button onClick={() => likeGame(game.id)} className="like-btn">Like</button>

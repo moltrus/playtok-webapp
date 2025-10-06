@@ -10,62 +10,47 @@ export default function VirtualizedGameFeed({ onEnterGame }) {
   const { games, loadMoreGames, hasMoreGames, isLoadingMore } = useGame();
   const [error, setError] = useState('');
   
-  // References for virtualization
   const feedContainerRef = useRef(null);
   const [visibleRange, setVisibleRange] = useState({ start: 0, end: 20 });
   const [scrollPosition, setScrollPosition] = useState(0);
-  const gameCardHeight = 280; // Estimated height of a game card in pixels
-  const bufferSize = 5; // Number of extra items to render above and below viewport
-  
-  // Handle game card click
+  const gameCardHeight = 280;
+  const bufferSize = 5;
+
   const handlePlay = useCallback((id) => {
     onEnterGame(id);
   }, [onEnterGame]);
 
-  // Update visible range based on scroll position
   const updateVisibleRange = useCallback(() => {
     if (!feedContainerRef.current) return;
-    
     const container = feedContainerRef.current;
     const scrollTop = container.scrollTop;
     const containerHeight = container.clientHeight;
-    
-    // Calculate which items should be visible
     const start = Math.max(0, Math.floor(scrollTop / gameCardHeight) - bufferSize);
     const end = Math.min(
       games.length,
       Math.ceil((scrollTop + containerHeight) / gameCardHeight) + bufferSize
     );
-    
     setVisibleRange({ start, end });
     setScrollPosition(scrollTop);
-    
-    // Check if we need to load more games (when scrolled near the bottom)
     if (hasMoreGames && !isLoadingMore && end >= games.length - 10) {
       loadMoreGames();
     }
   }, [games.length, hasMoreGames, isLoadingMore, loadMoreGames]);
 
-  // Add scroll event listener
   useEffect(() => {
     const container = feedContainerRef.current;
     if (!container) return;
-    
     container.addEventListener('scroll', updateVisibleRange);
-    // Initial update
     updateVisibleRange();
-    
     return () => {
       container.removeEventListener('scroll', updateVisibleRange);
     };
   }, [updateVisibleRange]);
 
-  // Recalculate visible range when games array changes
   useEffect(() => {
     updateVisibleRange();
   }, [games, updateVisibleRange]);
 
-  // Loading indicator
   if (games.length === 0 && isLoadingMore) {
     return (
       <div className="feed-container loading" style={{
@@ -92,7 +77,6 @@ export default function VirtualizedGameFeed({ onEnterGame }) {
     );
   }
 
-  // Error display
   if (error) {
     return (
       <div className="feed-container error" style={{
@@ -125,7 +109,6 @@ export default function VirtualizedGameFeed({ onEnterGame }) {
     );
   }
 
-  // Empty state
   if (!games || games.length === 0) {
     return (
       <div className="feed-container empty" style={{
@@ -140,13 +123,10 @@ export default function VirtualizedGameFeed({ onEnterGame }) {
     );
   }
 
-  // Calculate the total height of all items to maintain proper scroll area
   const totalHeight = games.length * gameCardHeight;
   
-  // Calculate which items to render
   const visibleGames = games.slice(visibleRange.start, visibleRange.end);
   
-  // Calculate the offset for the visible items
   const offsetY = visibleRange.start * gameCardHeight;
 
   return (
@@ -175,7 +155,6 @@ export default function VirtualizedGameFeed({ onEnterGame }) {
           ))}
         </div>
       </div>
-      
       {/* Loading indicator at bottom while loading more */}
       {isLoadingMore && (
         <div className="loading-more" style={{

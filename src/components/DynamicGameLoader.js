@@ -13,30 +13,18 @@ const DynamicGameLoader = ({ gameId, onGameReady }) => {
   const { fetchGameDetails } = useGame();
 
   useEffect(() => {
-    // Reset state when game ID changes
     setIsLoading(true);
     setError(null);
     setLoadingProgress(0);
-    
     let isMounted = true;
-    
     const loadGame = async () => {
       try {
-        // First, ensure we have the game metadata
         const gameData = await fetchGameDetails(gameId);
-        
         if (!isMounted) return;
-        
         setLoadingProgress(30);
-        
-        // Then load the actual game class
         const GameClass = await gameRegistry.getGameClass(gameId);
-        
         if (!isMounted) return;
-        
         setLoadingProgress(80);
-        
-        // Small delay to show loading progress
         setTimeout(() => {
           if (isMounted) {
             setLoadingProgress(100);
@@ -44,7 +32,6 @@ const DynamicGameLoader = ({ gameId, onGameReady }) => {
             onGameReady(GameClass, gameData);
           }
         }, 300);
-        
       } catch (err) {
         if (isMounted) {
           console.error('Error loading game:', err);
@@ -53,15 +40,12 @@ const DynamicGameLoader = ({ gameId, onGameReady }) => {
         }
       }
     };
-    
     loadGame();
-    
     return () => {
       isMounted = false;
     };
   }, [gameId, fetchGameDetails, onGameReady]);
 
-  // Loading indicator
   if (isLoading) {
     return (
       <div className="game-loading-container" style={{
@@ -77,7 +61,6 @@ const DynamicGameLoader = ({ gameId, onGameReady }) => {
         <div className="loading-text" style={{ marginBottom: '20px' }}>
           Loading Game...
         </div>
-        
         <div className="progress-container" style={{
           width: '80%',
           height: '10px',
@@ -92,7 +75,6 @@ const DynamicGameLoader = ({ gameId, onGameReady }) => {
             transition: 'width 0.3s ease-in-out',
           }} />
         </div>
-        
         <div className="loading-status" style={{ 
           marginTop: '10px',
           fontSize: '14px',
@@ -106,7 +88,6 @@ const DynamicGameLoader = ({ gameId, onGameReady }) => {
     );
   }
 
-  // Error display
   if (error) {
     return (
       <div className="game-error-container" style={{
@@ -125,7 +106,6 @@ const DynamicGameLoader = ({ gameId, onGameReady }) => {
         }}>
           😕
         </div>
-        
         <div style={{ 
           fontSize: '24px',
           marginBottom: '10px',
@@ -133,14 +113,12 @@ const DynamicGameLoader = ({ gameId, onGameReady }) => {
         }}>
           Oops!
         </div>
-        
         <div style={{
           textAlign: 'center',
           marginBottom: '20px',
         }}>
           {error}
         </div>
-        
         <button
           onClick={() => window.location.reload()}
           style={{
@@ -158,7 +136,6 @@ const DynamicGameLoader = ({ gameId, onGameReady }) => {
     );
   }
 
-  // Render nothing since the parent will render the game when onGameReady is called
   return null;
 };
 

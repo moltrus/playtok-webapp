@@ -1,4 +1,3 @@
-/* Leaderboard Component Styles */
 .leaderboard-container {
   background: rgba(10, 10, 31, 0.8);
   border-radius: 12px;
@@ -80,7 +79,7 @@
 }
 
 .leaderboard-row.top-1 .rank {
-  color: rgba(255, 215, 0, 0.8); /* Gold */
+  color: rgba(255, 215, 0, 0.8);
 }
 
 .leaderboard-row.top-2 {
@@ -88,7 +87,7 @@
 }
 
 .leaderboard-row.top-2 .rank {
-  color: rgba(192, 192, 192, 0.8); /* Silver */
+  color: rgba(192, 192, 192, 0.8);
 }
 
 .leaderboard-row.top-3 {
@@ -96,7 +95,7 @@
 }
 
 .leaderboard-row.top-3 .rank {
-  color: rgba(205, 127, 50, 0.8); /* Bronze */
+  color: rgba(205, 127, 50, 0.8);
 }
 
 .leaderboard-footer {

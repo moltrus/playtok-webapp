@@ -4,11 +4,9 @@ import './App.css';
 import { GameProvider } from './context/GameContext';
 import CoinBar from './components/CoinBar';
 
-// Lazy load pages for code splitting
 const HomePage = React.lazy(() => import('./pages/HomePage'));
 const GamePage = React.lazy(() => import('./pages/GamePage'));
 
-// Loading component
 function LoadingSpinner() {
   return (
     <div className="loading-spinner">

@@ -13,8 +13,6 @@ export default function GamePlayer({ gameId, onExit }) {
   //   return localStorage.getItem('playerName') || '';
   // });
 
-  
-
   function handleScoreUpdate(newScore) {
     setScore(newScore);
   }
@@ -55,7 +53,6 @@ export default function GamePlayer({ gameId, onExit }) {
             onScoreUpdate={handleScoreUpdate}
             onGameEnd={handleGameEnd}
           />
-          
           {/* Preload indicator positioned within the game canvas */}
           <div id="preload-indicator" style={{
             position: 'absolute',
@@ -71,7 +68,6 @@ export default function GamePlayer({ gameId, onExit }) {
             zIndex: 10,
             display: 'none'
           }}>Loading...</div>
-          
           {status === 'ended' && (
             <div style={{
               position:'absolute', 
@@ -96,7 +92,6 @@ export default function GamePlayer({ gameId, onExit }) {
                 letterSpacing: '1px',
                 marginBottom: '20px'
               }}>Score: {score}</h3>
-              
               <div className="result-buttons" style={{
                 display: 'flex',
                 gap: '10px'

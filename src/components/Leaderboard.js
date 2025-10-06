@@ -18,12 +18,10 @@ const Leaderboard = ({ gameId, limit = 5, autoRefresh = false, onClose }) => {
 
   useEffect(() => {
     let intervalId;
-    
     const loadLeaderboard = async () => {
       try {
         setLoading(true);
         const response = await fetchGameLeaderboard(gameId);
-        
         if (response && response.game) {
           setGameName(response.game.name);
           setLeaderboard(response.game.leaderboard || []);
@@ -39,12 +37,9 @@ const Leaderboard = ({ gameId, limit = 5, autoRefresh = false, onClose }) => {
     };
 
     loadLeaderboard();
-    
-    // Set up auto-refresh if enabled
     if (autoRefresh) {
-      intervalId = setInterval(loadLeaderboard, 30000); // Refresh every 30 seconds
+      intervalId = setInterval(loadLeaderboard, 30000);
     }
-    
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
@@ -100,7 +95,6 @@ const Leaderboard = ({ gameId, limit = 5, autoRefresh = false, onClose }) => {
             verticalAlign: 'middle'
           }}>LIVE</span>}
         </h3>
-        
         {onClose && (
           <button 
             onClick={onClose}
@@ -117,7 +111,6 @@ const Leaderboard = ({ gameId, limit = 5, autoRefresh = false, onClose }) => {
           </button>
         )}
       </div>
-      
       {error && (
         <div className="error-message" style={{
           color: '#ff6b6b',
@@ -128,7 +121,6 @@ const Leaderboard = ({ gameId, limit = 5, autoRefresh = false, onClose }) => {
           {error}
         </div>
       )}
-      
       {leaderboard.length === 0 && !error ? (
         <div className="empty-leaderboard" style={{
           textAlign: 'center',
@@ -204,7 +196,6 @@ const Leaderboard = ({ gameId, limit = 5, autoRefresh = false, onClose }) => {
           </tbody>
         </table>
       )}
-      
       <div style={{
         fontSize: '10px',
         color: 'rgba(255, 255, 255, 0.4)',

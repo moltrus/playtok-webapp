@@ -3,7 +3,6 @@ const router = express.Router();
 const fs = require('fs');
 const path = require('path');
 
-// Path to stats.json file
 const statsFilePath = path.join(__dirname, '../data/stats.json');
 
 /**
@@ -13,7 +12,6 @@ const statsFilePath = path.join(__dirname, '../data/stats.json');
  */
 router.get('/', (req, res) => {
   try {
-    // Check if file exists
     if (!fs.existsSync(statsFilePath)) {
       return res.status(404).json({ 
         success: false, 
@@ -21,10 +19,8 @@ router.get('/', (req, res) => {
       });
     }
 
-    // Read stats.json file
     const statsData = fs.readFileSync(statsFilePath, 'utf8');
     const stats = JSON.parse(statsData);
-    
     return res.json({
       success: true,
       stats
@@ -48,8 +44,6 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
   try {
     const { player, game, score } = req.body;
-    
-    // Validate required fields
     if (!player || !game || score === undefined) {
       return res.status(400).json({
         success: false,
@@ -57,7 +51,6 @@ router.post('/', (req, res) => {
       });
     }
 
-    // Check if file exists
     if (!fs.existsSync(statsFilePath)) {
       return res.status(404).json({ 
         success: false, 
@@ -65,11 +58,8 @@ router.post('/', (req, res) => {
       });
     }
 
-    // Read stats.json file
     const statsData = fs.readFileSync(statsFilePath, 'utf8');
     const stats = JSON.parse(statsData);
-    
-    // Find the game in the stats data
     const gameStats = stats.games.find(g => g.id === game);
     if (!gameStats) {
       return res.status(404).json({
@@ -78,33 +68,24 @@ router.post('/', (req, res) => {
       });
     }
 
-    // Add timestamp to the new score entry
     const newScoreEntry = {
       name: player,
       score: parseInt(score, 10),
       timestamp: new Date().toISOString()
     };
 
-    // Add the new score to the leaderboard
     if (!gameStats.leaderboard) {
       gameStats.leaderboard = [];
     }
 
-    // Add to leaderboard and sort by score (descending)
     gameStats.leaderboard.push(newScoreEntry);
     gameStats.leaderboard.sort((a, b) => b.score - a.score);
-    
-    // Keep only top scores (optional)
     if (gameStats.leaderboard.length > 10) {
       gameStats.leaderboard = gameStats.leaderboard.slice(0, 10);
     }
 
-    // Update base stats
     gameStats.baseStats.plays = (gameStats.baseStats.plays || 0) + 1;
-    
-    // Write updated stats back to file
     fs.writeFileSync(statsFilePath, JSON.stringify(stats, null, 2));
-    
     return res.json({
       success: true,
       message: 'Score submitted successfully',

@@ -1,51 +1,38 @@
-const express = require('express');
-const router = express.Router();
-const fs = require('fs');
-const path = require('path');
-const csvParser = require('../utils/parser');
+import { Router } from 'express';
+const router = Router();
+import { existsSync, readFileSync } from 'fs';
+import { join } from 'path';
+import { parseGamesCsv } from '../utils/parser';
 
-/**
- * @route   GET /api/games
- * @desc    Get all games from CSV file
- * @access  Public
- */
 router.get('/', async (req, res) => {
   try {
-    // Path to games.csv file (in the root directory)
-    const csvFilePath = path.join(__dirname, '../../games.csv');
-    
-    // Check if file exists
-    if (!fs.existsSync(csvFilePath)) {
+    const csvFilePath = join(__dirname, '../../games.csv');
+
+    if (!existsSync(csvFilePath)) {
       return res.status(404).json({ 
         success: false, 
         message: 'Games data file not found' 
       });
     }
 
-    // Read CSV file
-    const csvData = fs.readFileSync(csvFilePath, 'utf8');
-    
-    // Parse CSV to JSON using the parser utility
-    const allGames = await csvParser.parseGamesCsv(csvData);
-    
-    // Implement pagination
+    const csvData = readFileSync(csvFilePath, 'utf8');
+
+    const allGames = await parseGamesCsv(csvData);
+
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
-    
-    // Paginated results
+
     const games = allGames.slice(startIndex, endIndex);
-    
-    // Prepare pagination metadata
+
     const pagination = {
       total: allGames.length,
       totalPages: Math.ceil(allGames.length / limit),
       currentPage: page,
       hasMore: endIndex < allGames.length
     };
-    
-    // Return JSON response with pagination
+
     return res.json({
       success: true,
       count: allGames.length,
@@ -70,36 +57,30 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const gameId = req.params.id;
-    
-    // Path to games.csv file (in the root directory)
-    const csvFilePath = path.join(__dirname, '../../games.csv');
-    
-    // Check if file exists
-    if (!fs.existsSync(csvFilePath)) {
+
+    const csvFilePath = join(__dirname, '../../games.csv');
+
+    if (!existsSync(csvFilePath)) {
       return res.status(404).json({ 
         success: false, 
         message: 'Games data file not found' 
       });
     }
 
-    // Read CSV file
-    const csvData = fs.readFileSync(csvFilePath, 'utf8');
-    
-    // Parse CSV to JSON using the parser utility
-    const games = await csvParser.parseGamesCsv(csvData);
-    
-    // Find the requested game
+    const csvData = readFileSync(csvFilePath, 'utf8');
+
+    const games = await parseGamesCsv(csvData);
+
     const normalizedGameId = gameId.replace(/_/g, '-');
     const game = games.find(g => g.id === gameId || g.id === normalizedGameId);
-    
+
     if (!game) {
       return res.status(404).json({
         success: false,
         message: `Game with ID ${gameId} not found`
       });
     }
-    
-    // Return the game data
+
     return res.json({
       success: true,
       game
@@ -114,4 +95,4 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

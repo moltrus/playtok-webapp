@@ -8,7 +8,6 @@
 
 class GameRegistry {
     constructor() {
-        // Maps game IDs to their metadata and import functions
         this.registry = new Map();
         this.popularGames = [];
         this.preloaded = new Set();
@@ -37,13 +36,10 @@ class GameRegistry {
      */
     async batchRegister(gameIds) {
         gameIds.forEach(gameId => {
-            // Normalize ID to kebab-case
             const normalizedId = gameId.replace(/_/g, '-');
             
-            // Special case for 'dodge-game' - we know it should map to DodgeGame
             if (normalizedId === 'dodge-game') {
                 const importFn = () => import(
-                    /* webpackChunkName: "game-dodge" */
                     '../games/DodgeGame.js'
                 ).then(module => module.DodgeGame || Object.values(module)[0]);
                 
@@ -51,22 +47,17 @@ class GameRegistry {
                 return;
             }
             
-            // Convert kebab-case to PascalCase for class name
             const pascalCaseName = normalizedId
                 .split('-')
                 .map(part => part.charAt(0).toUpperCase() + part.slice(1))
                 .join('');
                 
-            // Add 'Game' suffix only if not already ending with 'Game'
             const className = pascalCaseName.endsWith('Game') ? pascalCaseName : pascalCaseName + 'Game';
             
-            // Create dynamic import function
             const importFn = () => import(
-                /* webpackChunkName: "game-[request]" */
                 `../games/${className}.js`
             ).then(module => module[className] || Object.values(module)[0]);
             
-            // Register the game
             this.register(normalizedId, { name: normalizedId }, importFn);
         });
     }
@@ -87,7 +78,6 @@ class GameRegistry {
     preloadPopularGames(progressCallback) {
         console.log(`Starting background preload of ${this.popularGames.length} popular games...`);
         
-        // Preload games in parallel with slight delay between starts
         this.popularGames.forEach((gameId, index) => {
             setTimeout(() => {
                 this.preloadGame(gameId).then(() => {
@@ -109,14 +99,12 @@ class GameRegistry {
     async preloadGame(gameId) {
         const normalizedId = gameId.replace(/_/g, '-');
         
-        // If already loaded or loading, return existing promise
         if (this.preloaded.has(normalizedId)) {
             const entry = this.registry.get(normalizedId);
             return entry.loaded;
         }
         
         if (this.loading.has(normalizedId)) {
-            // Wait for the ongoing loading process
             return new Promise((resolve, reject) => {
                 const checkLoaded = () => {
                     if (this.preloaded.has(normalizedId)) {
@@ -132,7 +120,6 @@ class GameRegistry {
             });
         }
         
-        // Start loading
         this.loading.add(normalizedId);
         
         try {
@@ -141,7 +128,6 @@ class GameRegistry {
                 throw new Error(`Game ${normalizedId} not registered`);
             }
             
-            // Load the game with retry logic
             entry.loaded = await this.loadGameWithRetry(entry.importFn);
             this.preloaded.add(normalizedId);
             return entry.loaded;
@@ -166,14 +152,12 @@ class GameRegistry {
                 lastError = error;
                 console.warn(`Game loading attempt ${attempt} failed:`, error);
                 
-                // If it's a ChunkLoadError, wait before retrying
                 if (error.name === 'ChunkLoadError' && attempt < retryCount) {
                     console.log(`Retrying in ${attempt * 1000}ms...`);
                     await new Promise(resolve => setTimeout(resolve, attempt * 1000));
                     continue;
                 }
                 
-                // If it's the last attempt or a different error, break
                 if (attempt === retryCount) {
                     break;
                 }
@@ -192,19 +176,17 @@ class GameRegistry {
         const normalizedId = gameId.replace(/_/g, '-');
         const startTime = performance.now();
         
-        // Check if already preloaded
         if (this.preloaded.has(normalizedId)) {
             const entry = this.registry.get(normalizedId);
             const loadTime = performance.now() - startTime;
-            console.log(`✓ Game loaded from cache: ${normalizedId} (${loadTime.toFixed(2)}ms)`);
+            console.log(`Game loaded from cache: ${normalizedId} (${loadTime.toFixed(2)}ms)`);
             return entry.loaded;
         }
         
-        // Load on demand
-        console.log(`⚠️ Loading game on demand: ${normalizedId} (preloading may not be complete)`);
+        console.log(`Loading game on demand: ${normalizedId} (preloading may not be complete)`);
         const gameClass = await this.preloadGame(normalizedId);
         const loadTime = performance.now() - startTime;
-        console.log(`⏱️ On-demand load completed: ${normalizedId} (${loadTime.toFixed(2)}ms)`);
+        console.log(`On-demand load completed: ${normalizedId} (${loadTime.toFixed(2)}ms)`);
         return gameClass;
     }
 
@@ -244,14 +226,12 @@ class GameRegistry {
     }
 }
 
-// Create and export singleton instance
 export const gameRegistry = new GameRegistry();
 
-// Add global debug helper
 if (typeof window !== 'undefined') {
     window.debugGameRegistry = () => {
         const status = gameRegistry.getStatus();
-        console.log('🎮 Game Registry Status:', {
+        console.log('Game Registry Status:', {
             'Registered Games': status.registeredCount,
             'Preloaded Games': status.preloaded,
             'Currently Loading': status.loading,
@@ -261,9 +241,7 @@ if (typeof window !== 'undefined') {
     };
 }
 
-// Initialize with all current games - this should be updated from API in production
 if (typeof window !== 'undefined') {
-    // Delay initialization to not interfere with initial app load
     setTimeout(() => {
         const initialGames = [
             'ball-bounce',
@@ -280,16 +258,12 @@ if (typeof window !== 'undefined') {
             'shape-builder',
             'tap-dash',
             'balloon-pop-frenzy',
-            // New games can be added here or loaded from API
         ];
         
         gameRegistry.batchRegister(initialGames).then(() => {
-            // Set popular games based on play count or other metrics
             gameRegistry.setPopularGames(['quick-tap', 'fruit-slice', 'ball-bounce']);
             
-            // Start preloading the most popular games
             gameRegistry.preloadPopularGames((loaded, total) => {
-                // Show preloading progress
                 if (typeof window !== 'undefined') {
                     let indicator = document.getElementById('preload-indicator');
                     if (!indicator) {
@@ -303,7 +277,6 @@ if (typeof window !== 'undefined') {
                     indicator.innerHTML = `Preloading games... ${loaded}/${total} (${percentage}%)`;
                     indicator.style.display = 'block';
                     
-                    // Hide after completion
                     if (loaded >= total) {
                         setTimeout(() => {
                             indicator.style.display = 'none';
