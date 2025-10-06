@@ -3,7 +3,7 @@
  * Handles API communication with the backend server
  */
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:5000/api';
 
 /**
  * Fetches the list of games from the server with pagination support
