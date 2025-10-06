@@ -42,10 +42,24 @@ const parseCSV = (csvString, hasHeader = true) => {
   });
 };
 
+/**
+ * Parses the games CSV file into structured game objects
+ * 
+ * This function:
+ * 1. Parses the CSV string into raw data objects
+ * 2. Transforms each row into a structured game object with nested properties
+ * 3. Normalizes game IDs (lowercase, spaces/underscores → hyphens)
+ * 4. Filters out invalid entries and specific excluded games
+ * 
+ * @param {string} csvString - Raw CSV file content
+ * @returns {Array} Array of game objects
+ */
 const parseGamesCsv = (csvString) => {
   const parsedData = parseCSV(csvString, true);
   
   return parsedData.map(row => {
+    // Normalize ID: lowercase, replace spaces/underscores with hyphens
+    // e.g., "Fruit_Slice" → "fruit-slice"
     const id = (row.ID || '').toLowerCase().trim().replace(/\s+/g, '-').replace(/_/g, '-');
     return {
       id: id,
@@ -63,8 +77,8 @@ const parseGamesCsv = (csvString) => {
       scoring: row.Scoring || '',
       notes: row.Notes || ''
     };
-  }).filter(game => game.id)
-    .filter(game => game.id !== 'tap-jump' && game.id !== 'tilt-maze');
+  }).filter(game => game.id)  // Remove entries without valid IDs
+    .filter(game => game.id !== 'tap-jump' && game.id !== 'tilt-maze');  // Exclude specific games
 };
 
 export default {
