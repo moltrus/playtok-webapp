@@ -5,7 +5,7 @@ export default function CoinBar() {
   
   return (
     <div className="coin-bar">
-      <span>Coins: {coins}</span>
+      <span>{coins}</span>
       {/* <div className="iap-buttons">
         <button onClick={() => addCoinsPurchase('small')}>+100</button>
         <button onClick={() => addCoinsPurchase('medium')}>+250</button>

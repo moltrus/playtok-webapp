@@ -228,9 +228,20 @@ html, body, #root, .app-root {
   color: #ffd700;
   text-shadow: 0 0 12px rgba(255, 215, 0, 0.8);
   font-family: 'Press Start 2P', monospace;
-  font-size: 14px;
+  font-size: 18px;
   flex-shrink: 0;
   min-width: 0;
+  display: inline-flex;
+  align-items: baseline; /* Align on baseline for better text alignment */
+  gap: 6px; /* Spacing between emoji and number */
+  line-height: 1;
+}
+
+.coin-bar span::before {
+  content: '🪙';
+  font-size: 18px; /* Same as number text height */
+  display: inline-block;
+  line-height: 1;
 }
 .iap-buttons {
   display: flex;
@@ -320,8 +331,9 @@ html, body, #root, .app-root {
 /* Larger screens */
 @media (min-width: 768px) {
   .game-card {
-    max-width: 480px;
-    flex: 0 1 auto; /* Don't stretch on larger screens */
+    max-width: 420px; /* Narrower on desktop for better aspect ratio */
+    height: 85vh; /* Fixed height on desktop */
+    flex: 0 0 auto; /* Don't grow or shrink */
   }
   .feed-slide {
     padding: 60px 16px 40px;
@@ -355,6 +367,7 @@ html, body, #root, .app-root {
     border-radius: 16px;
     margin: 0;
     height: auto; /* Auto height on larger screens */
+    flex: 1; /* Allow it to fill available space */
   }
 }
 
@@ -366,14 +379,14 @@ html, body, #root, .app-root {
 }
 .stats-sidebar {
   display: none; /* Deprecated */
-  align-items: center;
+}
+
 .preview-thumb {
   width: 100%;
   flex: 1; /* Fill available height */
   min-height: 0; /* Allow flexbox to shrink if needed */
   border-radius: 0;
-  background: 
-    linear-gradient(135deg, #8a2be2 0%, #4b0082 30%, #9370db 60%, #6a5acd 100%);
+  background: linear-gradient(135deg, #8a2be2 0%, #4b0082 30%, #9370db 60%, #6a5acd 100%);
   position: relative;
   overflow: hidden;
   display: flex;
@@ -390,11 +403,8 @@ html, body, #root, .app-root {
     flex: 0 0 auto;
     aspect-ratio: 9/16;
   }
-} justify-content: center;
-  transition: all 0.2s ease;
-  border: none;
-  box-sizing: border-box;
 }
+
 .preview-thumb.clickable {
   cursor: pointer;
 }
@@ -438,6 +448,7 @@ html, body, #root, .app-root {
   line-height: 1;
   z-index: 5;
   white-space: nowrap;
+  pointer-events: none; /* Allow clicks to pass through to preview-thumb */
 }
 
 .preview-thumb.disabled .play-indicator {
@@ -554,16 +565,17 @@ html, body, #root, .app-root {
   50% { transform: scale(1.2); }
 }
 
-/* Instagram Reels-style game info overlay at bottom */
+/* Instagram Reels-style game info overlay at top left */
 .game-info-overlay {
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
-  right: 0;
-  padding: 12px; /* Reduced padding for mobile */
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 70%, transparent 100%);
+  right: auto;
+  padding: 20px; /* Increased padding for spacing from edges */
+  background: transparent;
   z-index: 9;
   pointer-events: none;
+  max-width: 70%; /* Don't overlap with stats on right */
 }
 
 .game-info-overlay h2 { 
@@ -587,7 +599,7 @@ html, body, #root, .app-root {
 /* Larger screens */
 @media (min-width: 768px) {
   .game-info-overlay {
-    padding: 16px;
+    padding: 24px;
   }
   .game-info-overlay h2 {
     font-size: 20px;
