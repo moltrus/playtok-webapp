@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import GameCard from './GameCard';
 import { useGame } from '../context/GameContext';
 
@@ -6,6 +6,47 @@ export default function GameFeed({ onEnterGame }) {
   const { games } = useGame();
   const [loading] = useState(false);
   const [error] = useState('');
+  const [showSwipeHint, setShowSwipeHint] = useState(false);
+  const inactivityTimerRef = useRef(null);
+  const feedRef = useRef(null);
+
+  const resetInactivityTimer = useCallback(() => {
+    setShowSwipeHint(false);
+    if (inactivityTimerRef.current) {
+      clearTimeout(inactivityTimerRef.current);
+    }
+    inactivityTimerRef.current = setTimeout(() => {
+      setShowSwipeHint(true);
+    }, 15000); // Show hint after 15 seconds
+  }, []);
+
+  useEffect(() => {
+    resetInactivityTimer();
+
+    const handleScroll = () => {
+      resetInactivityTimer();
+    };
+
+    const handleTouch = () => {
+      resetInactivityTimer();
+    };
+
+    const feedElement = feedRef.current;
+    if (feedElement) {
+      feedElement.addEventListener('scroll', handleScroll);
+      feedElement.addEventListener('touchstart', handleTouch);
+    }
+
+    return () => {
+      if (inactivityTimerRef.current) {
+        clearTimeout(inactivityTimerRef.current);
+      }
+      if (feedElement) {
+        feedElement.removeEventListener('scroll', handleScroll);
+        feedElement.removeEventListener('touchstart', handleTouch);
+      }
+    };
+  }, [resetInactivityTimer]);
 
   const handlePlay = useCallback((id) => {
     onEnterGame(id);
@@ -84,12 +125,18 @@ export default function GameFeed({ onEnterGame }) {
   }
 
   return (
-    <div className="feed-container">
+    <div className="feed-container" ref={feedRef}>
       {games.map(g => (
         <section key={g.id} className="feed-slide">
           <GameCard game={g} onPlay={handlePlay} />
         </section>
       ))}
+      {showSwipeHint && (
+        <div className="swipe-hint">
+          <div className="swipe-hint-text">Swipe Up</div>
+          <div className="swipe-hint-arrow">↑</div>
+        </div>
+      )}
     </div>
   );
 }
