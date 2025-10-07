@@ -7,20 +7,11 @@ import CoinBar from './components/CoinBar';
 const HomePage = React.lazy(() => import('./pages/HomePage'));
 const GamePage = React.lazy(() => import('./pages/GamePage'));
 
-function LoadingSpinner() {
-  return (
-    <div className="loading-spinner">
-      <div className="spinner"></div>
-      <p>Loading...</p>
-    </div>
-  );
-}
-
 function AppShell() {
   return (
     <div className="app-root">
       <CoinBar />
-      <Suspense fallback={<LoadingSpinner />}>
+      <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/game/:gameId" element={<GamePage />} />

@@ -1,107 +1,3 @@
-/* Loading spinner styles */
-.loading-spinner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 50vh;
-  padding: 2rem;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid #00ffff;
-  border-top: 3px solid transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
-  box-shadow: 0 0 20px #00ffff;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.loading-spinner p {
-  color: #00ffff;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.8rem;
-  text-shadow: 0 0 10px #00ffff;
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; }
-}
-
-/* Game loading specific styles */
-.game-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  background: rgba(10, 10, 31, 0.9);
-  color: #00ffff;
-  font-family: 'Press Start 2P', monospace;
-  text-align: center;
-  padding: 2rem;
-}
-
-.game-loading-spinner {
-  width: 60px;
-  height: 60px;
-  border: 4px solid #00ffff;
-  border-top: 4px solid transparent;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin-bottom: 2rem;
-  box-shadow: 0 0 30px #00ffff;
-}
-
-.game-loading-text {
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-  text-shadow: 0 0 10px #00ffff;
-}
-
-.game-loading-tip {
-  font-size: 0.6rem;
-  opacity: 0.8;
-  color: #8a2be2;
-  margin-top: 1rem;
-  max-width: 250px;
-  line-height: 1.4;
-}
-
-.preloading-indicator {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: linear-gradient(145deg, rgba(0, 255, 255, 0.15), rgba(138, 43, 226, 0.15));
-  border: 1px solid #00ffff;
-  padding: 0.8rem 1.2rem;
-  border-radius: 8px;
-  color: #00ffff;
-  font-family: 'VT323', monospace;
-  font-size: 0.8rem;
-  z-index: 1000;
-  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
-  text-shadow: 0 0 5px #00ffff;
-  backdrop-filter: blur(5px);
-  animation: pulse 2s ease-in-out infinite;
-  max-width: 250px;
-  text-align: center;
-}
-
-@keyframes fadeInOut {
-  0%, 100% { opacity: 0; }
-  50% { opacity: 1; }
-}
-
 .error-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
@@ -111,6 +7,125 @@
 .retry-button:hover {
   transform: scale(1.05);
   box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+}
+
+/* Game Loading Animation */
+.game-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: 2rem;
+  background: linear-gradient(135deg, #0a0a1f 0%, #1a0a2d 50%, #0a0a1f 100%);
+}
+
+.game-loading-spinner {
+  width: 80px;
+  height: 80px;
+  position: relative;
+  margin-bottom: 2rem;
+  animation: spinnerPulse 2s ease-in-out infinite;
+}
+
+.game-loading-spinner::before,
+.game-loading-spinner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 4px solid transparent;
+  animation: spinnerRotate 1.5s linear infinite;
+}
+
+.game-loading-spinner::before {
+  border-top-color: #00ffff;
+  border-right-color: #00ffff;
+  box-shadow: 
+    0 0 20px rgba(0, 255, 255, 0.8),
+    0 0 40px rgba(0, 255, 255, 0.6),
+    inset 0 0 20px rgba(0, 255, 255, 0.4);
+}
+
+.game-loading-spinner::after {
+  border-top-color: #8a2be2;
+  border-left-color: #8a2be2;
+  animation-direction: reverse;
+  animation-duration: 1s;
+  box-shadow: 
+    0 0 20px rgba(138, 43, 226, 0.8),
+    0 0 40px rgba(138, 43, 226, 0.6),
+    inset 0 0 20px rgba(138, 43, 226, 0.4);
+}
+
+@keyframes spinnerRotate {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes spinnerPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.05);
+    filter: brightness(1.3);
+  }
+}
+
+.game-loading-text {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  color: #00ffff;
+  text-shadow: 
+    0 0 10px rgba(0, 255, 255, 0.8),
+    0 0 20px rgba(0, 255, 255, 0.6),
+    0 0 30px rgba(138, 43, 226, 0.4);
+  margin-bottom: 1rem;
+  animation: textGlow 2s ease-in-out infinite;
+  letter-spacing: 2px;
+}
+
+.game-loading-tip {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  color: #8a2be2;
+  text-shadow: 0 0 10px rgba(138, 43, 226, 0.6);
+  max-width: 300px;
+  text-align: center;
+  animation: tipFade 3s ease-in-out infinite;
+}
+
+@keyframes textGlow {
+  0%, 100% {
+    text-shadow: 
+      0 0 10px rgba(0, 255, 255, 0.8),
+      0 0 20px rgba(0, 255, 255, 0.6),
+      0 0 30px rgba(138, 43, 226, 0.4);
+  }
+  50% {
+    text-shadow: 
+      0 0 20px rgba(0, 255, 255, 1),
+      0 0 30px rgba(0, 255, 255, 0.8),
+      0 0 40px rgba(138, 43, 226, 0.6);
+  }
+}
+
+@keyframes tipFade {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .App {
