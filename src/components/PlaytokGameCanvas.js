@@ -21,7 +21,6 @@ export function PlaytokGameCanvas({ gameId, onScoreUpdate, onGameEnd }) {
     const retryGame = useCallback(() => {
         setError(null);
         setIsLoading(true);
-        setLoadingMessage('Retrying...');
         initializedRef.current = false;
     }, []);
 

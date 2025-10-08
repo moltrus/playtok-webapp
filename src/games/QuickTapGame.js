@@ -192,13 +192,6 @@ export class QuickTapGame extends BaseGame {
             }
         }
         
-        // Timer display
-        const secondsRemaining = Math.ceil(this.timeRemaining / 1000);
-        this.ctx.fillStyle = 'white';
-        this.ctx.font = '16px Arial';
-        this.ctx.textAlign = 'right';
-        this.ctx.fillText(`Time: ${secondsRemaining}s`, this.canvasWidth - 20, 30);
-        
         // Draw flash effect
         if (this.flashEffect) {
             const alpha = this.flashEffect.life / this.flashEffect.maxLife;

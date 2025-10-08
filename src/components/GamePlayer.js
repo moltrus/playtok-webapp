@@ -25,7 +25,9 @@ export default function GamePlayer({ gameId, onExit }) {
 
   function handleReplay() {
     setScore(0);
-    setStatus('running');
+    setStatus('loading');
+    // Set to running after a brief delay to ensure component remounts
+    setTimeout(() => setStatus('running'), 10);
     setGameKey(prev => prev + 1); // Increment key to force remount
   }
 
@@ -61,21 +63,6 @@ export default function GamePlayer({ gameId, onExit }) {
             onScoreUpdate={handleScoreUpdate}
             onGameEnd={handleGameEnd}
           />
-          {/* Preload indicator positioned within the game canvas */}
-          <div id="preload-indicator" style={{
-            position: 'absolute',
-            top: '10px',
-            right: '10px',
-            background: 'rgba(0, 0, 0, 0.7)',
-            color: '#00ffff',
-            padding: '5px 10px',
-            borderRadius: '4px',
-            fontSize: '12px',
-            fontFamily: 'VT323, monospace',
-            border: '1px solid rgba(0, 255, 255, 0.3)',
-            zIndex: 10,
-            display: 'none'
-          }}>Loading...</div>
           {status === 'ended' && (
             <div style={{
               position:'absolute', 
