@@ -14,7 +14,7 @@ export class QuickTapGame extends BaseGame {
         this.lastTime = 0;
         this.spawnTimer = 0;
         this.targetColor = '#FF6B6B';
-        this.distractorColors = ['#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8'];
+        this.distractorColors = ['#9B59B6', '#45B7D1', '#27AE60', '#E67E22'];
         this.gemTypes = ['ruby', 'emerald', 'sapphire', 'topaz', 'aquamarine'];
         this.targetRadius = 25;
         this.spawnRate = 1200; // milliseconds
