@@ -216,19 +216,41 @@ export class DodgeGame extends BaseGame {
             // Clear canvas
             this.ctx.clearRect(0, 0, canvasWidth, canvasHeight);
             
-            // Background
+            // Background - Dynamic space theme
             try {
-                const gradient = this.ctx.createRadialGradient(
-                    canvasWidth / 2, canvasHeight / 2, 0,
-                    canvasWidth / 2, canvasHeight / 2, canvasWidth
-                );
-                gradient.addColorStop(0, '#2C3E50');
-                gradient.addColorStop(1, '#34495E');
+                // Main gradient background
+                const gradient = this.ctx.createLinearGradient(0, 0, 0, canvasHeight);
+                gradient.addColorStop(0, '#0F0F23');  // Deep space blue
+                gradient.addColorStop(0.3, '#1A1A3A'); // Dark purple
+                gradient.addColorStop(0.7, '#2D1B69'); // Deep purple
+                gradient.addColorStop(1, '#4A0E4E');   // Dark magenta
                 this.ctx.fillStyle = gradient;
                 this.ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                
+                // Add some stars
+                this.ctx.fillStyle = '#FFFFFF';
+                for (let i = 0; i < 50; i++) {
+                    const x = (i * 137) % canvasWidth; // Pseudo-random positions
+                    const y = (i * 149) % canvasHeight;
+                    const size = ((i * 17) % 3) + 1;
+                    this.ctx.globalAlpha = 0.3 + ((i * 23) % 70) / 100;
+                    this.ctx.fillRect(x, y, size, size);
+                }
+                this.ctx.globalAlpha = 1.0;
+                
+                // Add some nebula effects
+                const nebulaGradient = this.ctx.createRadialGradient(
+                    canvasWidth * 0.7, canvasHeight * 0.3, 0,
+                    canvasWidth * 0.7, canvasHeight * 0.3, canvasWidth * 0.4
+                );
+                nebulaGradient.addColorStop(0, 'rgba(138, 43, 226, 0.1)'); // Purple nebula
+                nebulaGradient.addColorStop(1, 'rgba(138, 43, 226, 0)');
+                this.ctx.fillStyle = nebulaGradient;
+                this.ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                
             } catch (gradientError) {
                 // Fallback if gradient fails
-                this.ctx.fillStyle = '#2C3E50';
+                this.ctx.fillStyle = '#1A1A3A';
                 this.ctx.fillRect(0, 0, canvasWidth, canvasHeight);
             }
             
