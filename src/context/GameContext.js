@@ -4,7 +4,7 @@ import { fetchGames, fetchStats } from '../services/gameService';
 
 /*
 GameContext responsibilities:
-- Hold coin balance (start with 100 for MVP)
+- Hold coin balance (start with 1000 for MVP)
 - Track per-game stats: likes, plays, players (active), winners, coinsSpent
 - Provide functions: playGame(id), likeGame(id), finishGame(id, { won: boolean })
 - Fake auto-growth every N seconds: randomly increment likes/plays/winners
@@ -30,29 +30,21 @@ const defaultGameStats = (base) => {
 function buildInitialState(gamesSeed) {
   const list = gamesSeed || fallbackGames;
   const state = { coins: 100, games: {}, likedGames: new Set() };
-  const hiddenGames = [
-    'tap-jump', 
-    'tilt-maze',
+  const allowedGames = [
+    'ball-bounce',
+    'fruit-slice',
+    'memory-flip',
+    'quick-tap',
+    'stack-tower',
+    'dodge-game',
+    'maze-escape',
     'bubble-pop',
-    'tap-dash',
-    'balloon-pop-frenzy',
-    'reaction-arrows',
-    'stack-cups',
-    'shadow-match',
-    'speed-tap-numbers',
-    'lane-switcher',
-    'tap-timer',
-    'tower-balance',
-    'spot-difference',
-    'flip-runner',
-    'tap-the-odd',
-    'pair-connect',
-    'rocket-avoid',
-    'color-sequence',
-    'whack-a-mole',
-    'brick-breaker-mini'
+    'quiz-blitz',
+    'color-match-tap',
+    'sky-drop',
+    'shape-builder'
   ];
-  list.filter(g => !hiddenGames.includes(g.id))
+  list.filter(g => allowedGames.includes(g.id))
       .forEach(g => { state.games[g.id] = defaultGameStats(g.base); });
   return state;
 }
@@ -215,29 +207,21 @@ export function GameProvider({ children }) {
         const newGames = gamesResponse.games
           .filter(g => {
             const normalizedId = g.id.replace(/_/g, '-');
-            const hiddenGames = [
-              'tap-jump', 
-              'tilt-maze',
+            const allowedGames = [
+              'ball-bounce',
+              'fruit-slice',
+              'memory-flip',
+              'quick-tap',
+              'stack-tower',
+              'dodge-game',
+              'maze-escape',
               'bubble-pop',
-              'tap-dash',
-              'balloon-pop-frenzy',
-              'reaction-arrows',
-              'stack-cups',
-              'shadow-match',
-              'speed-tap-numbers',
-              'lane-switcher',
-              'tap-timer',
-              'tower-balance',
-              'spot-difference',
-              'flip-runner',
-              'tap-the-odd',
-              'pair-connect',
-              'rocket-avoid',
-              'color-sequence',
-              'whack-a-mole',
-              'brick-breaker-mini'
+              'quiz-blitz',
+              'color-match-tap',
+              'sky-drop',
+              'shape-builder'
             ];
-            return !hiddenGames.includes(normalizedId);
+            return allowedGames.includes(normalizedId);
           })
           .map(g => transformGameData(g));
         
@@ -290,29 +274,21 @@ export function GameProvider({ children }) {
           const transformed = gamesResponse.games
             .filter(g => {
               const normalizedId = g.id.replace(/_/g, '-');
-              const hiddenGames = [
-                'tap-jump', 
-                'tilt-maze',
+              const allowedGames = [
+                'ball-bounce',
+                'fruit-slice',
+                'memory-flip',
+                'quick-tap',
+                'stack-tower',
+                'dodge-game',
+                'maze-escape',
                 'bubble-pop',
-                'tap-dash',
-                'balloon-pop-frenzy',
-                'reaction-arrows',
-                'stack-cups',
-                'shadow-match',
-                'speed-tap-numbers',
-                'lane-switcher',
-                'tap-timer',
-                'tower-balance',
-                'spot-difference',
-                'flip-runner',
-                'tap-the-odd',
-                'pair-connect',
-                'rocket-avoid',
-                'color-sequence',
-                'whack-a-mole',
-                'brick-breaker-mini'
+                'quiz-blitz',
+                'color-match-tap',
+                'sky-drop',
+                'shape-builder'
               ];
-              return !hiddenGames.includes(normalizedId);
+              return allowedGames.includes(normalizedId);
             })
             .map(g => transformGameData(g));
           

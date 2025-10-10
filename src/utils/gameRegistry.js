@@ -251,7 +251,7 @@ if (typeof window !== 'undefined') {
             'stack-tower',
             'dodge-game',
             'maze-escape',
-            // 'bubble-pop',
+            // '',
             'quiz-blitz',
             'color-match-tap',
             'sky-drop',

@@ -65,29 +65,21 @@ const parseGamesCsv = (csvString) => {
     };
   }).filter(game => game.id)
     .filter(game => {
-      const hiddenGames = [
-        'tap-jump', 
-        'tilt-maze',
+      const allowedGames = [
+        'ball-bounce',
+        'fruit-slice',
+        'memory-flip',
+        'quick-tap',
+        'stack-tower',
+        'dodge-game',
+        'maze-escape',
         'bubble-pop',
-        'tap-dash',
-        'balloon-pop-frenzy',
-        'reaction-arrows',
-        'stack-cups',
-        'shadow-match',
-        'speed-tap-numbers',
-        'lane-switcher',
-        'tap-timer',
-        'tower-balance',
-        'spot-difference',
-        'flip-runner',
-        'tap-the-odd',
-        'pair-connect',
-        'rocket-avoid',
-        'color-sequence',
-        'whack-a-mole',
-        'brick-breaker-mini'
+        'quiz-blitz',
+        'color-match-tap',
+        'sky-drop',
+        'shape-builder'
       ];
-      return !hiddenGames.includes(game.id);
+      return allowedGames.includes(game.id);
     });
 };
 

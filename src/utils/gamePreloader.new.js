@@ -14,7 +14,7 @@ class GamePreloader {
             'stack-tower',
             'dodge-game',
             'maze-escape',
-            // 'bubble-pop',
+            'bubble-pop',
             'quiz-blitz',
             'color-match-tap',
             'sky-drop',

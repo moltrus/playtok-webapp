@@ -18,7 +18,6 @@ export class BubblePopGame extends BaseGame {
             this.lastTime = 0;
             this.targetColor = null;
             this.colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#FFD93D']; // 6 colors for more variety
-            this.bubbleRadius = 25;
             this.rows = 6;
             this.cols = 8;
             this.minClusterSize = 3;
@@ -42,7 +41,6 @@ export class BubblePopGame extends BaseGame {
         this.lastTime = 0;
         this.targetColor = '#FF6B6B';
         this.colors = ['#FF6B6B', '#4ECDC4', '#45B7D1'];
-        this.bubbleRadius = 25;
         this.rows = 6;
         this.cols = 8;
         this.minClusterSize = 3;
@@ -79,9 +77,44 @@ export class BubblePopGame extends BaseGame {
         try {
             this.bubbles = [];
             
+            // Calculate responsive bubble size and grid based on canvas dimensions
+            const availableWidth = this.canvasWidth - 40; // Leave some margin
+            const availableHeight = this.canvasHeight - 120; // Leave space for UI
+            
+            // Try to maintain reasonable grid size, but scale down if necessary
+            let targetCols = this.cols;
+            let targetRows = this.rows;
+            let bubbleRadius = 25; // Start with preferred size
+            
+            // Calculate if current size fits
+            const spacing = bubbleRadius * 2.1;
+            const requiredWidth = targetCols * spacing;
+            const requiredHeight = targetRows * spacing + 80;
+            
+            // If it doesn't fit, scale down the bubble radius first
+            if (requiredWidth > availableWidth || requiredHeight > availableHeight) {
+                const maxRadiusForWidth = availableWidth / (targetCols * 2.1);
+                const maxRadiusForHeight = (availableHeight - 80) / (targetRows * 2.1);
+                bubbleRadius = Math.max(15, Math.min(25, Math.min(maxRadiusForWidth, maxRadiusForHeight)));
+            }
+            
+            // Recalculate spacing with the determined radius
+            const finalSpacing = bubbleRadius * 2.1;
+            
+            // Final check - if still too big, reduce grid size as last resort
+            if (targetCols * finalSpacing > availableWidth) {
+                targetCols = Math.max(6, Math.floor(availableWidth / finalSpacing));
+            }
+            if (targetRows * finalSpacing + 80 > availableHeight) {
+                targetRows = Math.max(4, Math.floor((availableHeight - 80) / finalSpacing));
+            }
+            
+            this.bubbleRadius = bubbleRadius;
+            this.cols = targetCols;
+            this.rows = targetRows;
+            
             // Calculate starting position to center the grid
-            const spacing = this.bubbleRadius * 2.1;
-            const startX = (this.canvasWidth - (this.cols * spacing)) / 2 + this.bubbleRadius;
+            const startX = (this.canvasWidth - (this.cols * finalSpacing)) / 2 + this.bubbleRadius;
             const startY = 80;
             
             // Create a distribution plan to ensure all 6 colors are used
@@ -98,8 +131,8 @@ export class BubblePopGame extends BaseGame {
             // Create bubbles with the planned distribution
             for (let row = 0; row < this.rows; row++) {
                 for (let col = 0; col < this.cols; col++) {
-                    const x = startX + col * spacing;
-                    const y = startY + row * spacing;
+                    const x = startX + col * finalSpacing;
+                    const y = startY + row * finalSpacing;
                     
                     const colorIndex = colorDistribution[index++];
                     const color = this.colors[colorIndex];
@@ -194,14 +227,46 @@ export class BubblePopGame extends BaseGame {
     
     generateSimpleBubbles() {
         this.bubbles = [];
-        const spacing = this.bubbleRadius * 2.1;
-        const startX = 40;
+        
+        // Use responsive sizing for fallback bubbles too
+        const availableWidth = this.canvasWidth - 40;
+        const availableHeight = this.canvasHeight - 120;
+        
+        // Try to maintain reasonable grid size, but scale down if necessary
+        let targetCols = this.cols;
+        let targetRows = this.rows;
+        let bubbleRadius = 25;
+        
+        const spacing = bubbleRadius * 2.1;
+        const requiredWidth = targetCols * spacing;
+        const requiredHeight = targetRows * spacing + 100;
+        
+        if (requiredWidth > availableWidth || requiredHeight > availableHeight) {
+            const maxRadiusForWidth = availableWidth / (targetCols * 2.1);
+            const maxRadiusForHeight = (availableHeight - 100) / (targetRows * 2.1);
+            bubbleRadius = Math.max(15, Math.min(25, Math.min(maxRadiusForWidth, maxRadiusForHeight)));
+        }
+        
+        const finalSpacing = bubbleRadius * 2.1;
+        
+        if (targetCols * finalSpacing > availableWidth) {
+            targetCols = Math.max(6, Math.floor(availableWidth / finalSpacing));
+        }
+        if (targetRows * finalSpacing + 100 > availableHeight) {
+            targetRows = Math.max(4, Math.floor((availableHeight - 100) / finalSpacing));
+        }
+        
+        this.bubbleRadius = bubbleRadius;
+        this.cols = targetCols;
+        this.rows = targetRows;
+        
+        const startX = (this.canvasWidth - (this.cols * finalSpacing)) / 2 + this.bubbleRadius;
         const startY = 100;
         
         for (let row = 0; row < this.rows; row++) {
             for (let col = 0; col < this.cols; col++) {
-                const x = startX + col * spacing;
-                const y = startY + row * spacing;
+                const x = startX + col * finalSpacing;
+                const y = startY + row * finalSpacing;
                 
                 // Simple pattern: every 4 bubbles same color
                 const colorIndex = Math.floor(col / 4) % this.colors.length;

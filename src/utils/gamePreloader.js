@@ -14,7 +14,7 @@ class GamePreloader {
             'stack-tower',
             'dodge-game',
             'maze-escape',
-            // 'bubble-pop',
+            'bubble-pop',
             'quiz-blitz',
             'color-match-tap',
             'sky-drop',
@@ -122,9 +122,9 @@ class GamePreloader {
                     case 'maze-escape':
                         const { MazeEscapeGame } = await import('../games/MazeEscapeGame.js');
                         return MazeEscapeGame;
-                    // case 'bubble-pop':
-                    //     const { BubblePopGame } = await import('../games/BubblePopGame.js');
-                    //     return BubblePopGame;
+                    case 'bubble-pop':
+                        const { BubblePopGame } = await import('../games/BubblePopGame.js');
+                        return BubblePopGame;
                     case 'quiz-blitz':
                         const { QuizBlitzGame } = await import('../games/QuizBlitzGame.js');
                         return QuizBlitzGame;
