@@ -14,13 +14,13 @@ class GamePreloader {
             'stack-tower',
             'dodge-game',
             'maze-escape',
-            'bubble-pop',
+            // 'bubble-pop',
             'quiz-blitz',
             'color-match-tap',
             'sky-drop',
             'shape-builder',
-            'tap-dash',
-            'balloon-pop-frenzy',
+            // 'tap-dash',
+            // 'balloon-pop-frenzy',
         ];
         if (typeof window !== 'undefined') {
             gameRegistry.batchRegister(this.allGames);
@@ -122,9 +122,9 @@ class GamePreloader {
                     case 'maze-escape':
                         const { MazeEscapeGame } = await import('../games/MazeEscapeGame.js');
                         return MazeEscapeGame;
-                    case 'bubble-pop':
-                        const { BubblePopGame } = await import('../games/BubblePopGame.js');
-                        return BubblePopGame;
+                    // case 'bubble-pop':
+                    //     const { BubblePopGame } = await import('../games/BubblePopGame.js');
+                    //     return BubblePopGame;
                     case 'quiz-blitz':
                         const { QuizBlitzGame } = await import('../games/QuizBlitzGame.js');
                         return QuizBlitzGame;
@@ -137,12 +137,12 @@ class GamePreloader {
                     case 'shape-builder':
                         const { ShapeBuilderGame } = await import('../games/ShapeBuilderGame.js');
                         return ShapeBuilderGame;
-                    case 'tap-dash':
-                        const { TapDashGame } = await import('../games/TapDashGame.js');
-                        return TapDashGame;
-                    case 'balloon-pop-frenzy':
-                        const { BalloonPopFrenzy } = await import('../games/BalloonPopFrenzy.js');
-                        return BalloonPopFrenzy;
+                    // case 'tap-dash':
+                    //     const { TapDashGame } = await import('../games/TapDashGame.js');
+                    //     return TapDashGame;
+                    // case 'balloon-pop-frenzy':
+                    //     const { BalloonPopFrenzy } = await import('../games/BalloonPopFrenzy.js');
+                    //     return BalloonPopFrenzy;
                     default:
                         throw new Error(`Unknown game: ${gameId}`);
                 }

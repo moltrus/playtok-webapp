@@ -55,8 +55,8 @@ export default function GamePlayer({ gameId, onExit }) {
         <button onClick={() => handleExit(false)}>Back</button>
         <h2>{meta.name}</h2>
       </div>
-      <div className="player-surface" style={{padding: '20px', flex: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 120px)'}}>
-        <div style={{width:'100%', maxWidth:480, aspectRatio:'9/16', position:'relative', margin: '0 auto'}}>
+      <div className="player-surface" style={{padding: '10px', flex: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 80px)'}}>
+        <div style={{width:'100%', maxWidth: 'min(480px, calc(100vw - 20px))', aspectRatio:'9/16', position:'relative', margin: '0 auto'}}>
           <PlaytokGameCanvas 
             key={gameKey}
             gameId={gameId}

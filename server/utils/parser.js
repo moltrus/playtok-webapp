@@ -64,7 +64,22 @@ const parseGamesCsv = (csvString) => {
       notes: row.Notes || ''
     };
   }).filter(game => game.id)
-    .filter(game => game.id !== 'tap-jump' && game.id !== 'tilt-maze');
+    .filter(game => {
+      const hiddenGames = [
+        'tap-jump', 
+        'tilt-maze',
+        'bubble-pop',
+        'tap-dash',
+        'balloon-pop-frenzy',
+        'reaction-arrows',
+        'stack-cups',
+        'shadow-match',
+        'speed-tap-numbers',
+        'lane-switcher',
+        'tap-timer'
+      ];
+      return !hiddenGames.includes(game.id);
+    });
 };
 
 export default {

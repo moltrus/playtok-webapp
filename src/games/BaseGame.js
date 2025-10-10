@@ -58,6 +58,15 @@ export class BaseGame {
     }
 
     setupInputHandlers() {
+        console.log('Setting up input handlers for canvas');
+        
+        // Add a simple test listener
+        const testListener = (e) => {
+            console.log('Canvas received event:', e.type, 'at', e.clientX, e.clientY);
+        };
+        this.canvas.addEventListener('click', testListener);
+        this.canvas.addEventListener('touchstart', testListener);
+        
         // Ensure these are removed first to prevent duplicates
         this.canvas.removeEventListener('touchstart', this.handleTouchStart);
         this.canvas.removeEventListener('touchmove', this.handleTouchMove);
@@ -80,6 +89,8 @@ export class BaseGame {
         this.canvas.addEventListener('mousedown', this.boundMouseDown);
         this.canvas.addEventListener('mousemove', this.boundMouseMove);
         this.canvas.addEventListener('mouseup', this.boundMouseUp);
+        
+        console.log('Input handlers attached to canvas');
         
         // Ensure pointer events are enabled
         this.canvas.style.touchAction = 'none';
@@ -270,6 +281,8 @@ export class BaseGame {
         const scaleX = this.canvasWidth / rect.width;
         const scaleY = this.canvasHeight / rect.height;
         
+        console.log('getLogicalCoordinates - client:', clientX, clientY, 'rect:', rect.left, rect.top, rect.width, rect.height, 'canvasWidth:', this.canvasWidth, 'scale:', scaleX, scaleY);
+        
         return {
             x: (clientX - rect.left) * scaleX,
             y: (clientY - rect.top) * scaleY
@@ -294,6 +307,7 @@ export class BaseGame {
     }
 
     handlePointerDown(event) {
+        console.log('handlePointerDown called, isRunning:', this.isRunning, 'event type:', event.type);
         if (!this.isRunning) return;
         
         // Prevent default for touch events
@@ -301,19 +315,19 @@ export class BaseGame {
             event.preventDefault();
         }
         
-        const rect = this.canvas.getBoundingClientRect();
         const x = event.clientX || (event.touches && event.touches[0] ? event.touches[0].clientX : 0);
         const y = event.clientY || (event.touches && event.touches[0] ? event.touches[0].clientY : 0);
         
-        // Convert to canvas coordinate space
-        const canvasX = x - rect.left;
-        const canvasY = y - rect.top;
+        // Convert to logical canvas coordinates
+        const logicalCoords = this.getLogicalCoordinates(x, y);
+        console.log('Tap coordinates - client:', x, y, 'logical:', logicalCoords.x, logicalCoords.y);
         
-        this.checkTap(canvasX, canvasY);
+        this.checkTap(logicalCoords.x, logicalCoords.y);
     }
 
     handleTouchStart(e) {
         e.preventDefault();
+        this.handlePointerDown(e);
     }
 
     handleTouchMove(e) {
@@ -326,6 +340,7 @@ export class BaseGame {
 
     handleMouseDown(e) {
         e.preventDefault();
+        this.handlePointerDown(e);
     }
 
     handleMouseMove(e) {
@@ -334,6 +349,12 @@ export class BaseGame {
 
     handleMouseUp(e) {
         e.preventDefault();
+    }
+
+    // Default checkTap method - subclasses should override this
+    checkTap(x, y) {
+        // Default implementation does nothing
+        // Subclasses should override this method to handle taps
     }
 }
 

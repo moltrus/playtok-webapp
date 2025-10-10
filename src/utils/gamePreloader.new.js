@@ -14,13 +14,13 @@ class GamePreloader {
             'stack-tower',
             'dodge-game',
             'maze-escape',
-            'bubble-pop',
+            // 'bubble-pop',
             'quiz-blitz',
             'color-match-tap',
             'sky-drop',
             'shape-builder',
-            'tap-dash',
-            'balloon-pop-frenzy',
+            // 'tap-dash',
+            // 'balloon-pop-frenzy',
         ];
         if (typeof window !== 'undefined') {
             gameRegistry.batchRegister(this.allGames);

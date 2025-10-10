@@ -132,16 +132,24 @@ export function PlaytokGameCanvas({ gameId, onScoreUpdate, onGameEnd }) {
                 const aspectRatio = 9/16;
                 const containerWidth = containerRect.width;
                 const containerHeight = containerRect.height;
+                
+                // Better mobile viewport handling
+                const isMobile = window.innerWidth <= 480;
+                const maxWidth = isMobile ? Math.min(containerWidth - 10, window.innerWidth - 10) : containerWidth;
+                const maxHeight = isMobile ? Math.min(containerHeight - 10, window.innerHeight - 100) : containerHeight;
+                
                 let finalWidth, finalHeight;
-                if (containerWidth / containerHeight > aspectRatio) {
-                    finalHeight = containerHeight;
-                    finalWidth = containerHeight * aspectRatio;
+                if (maxWidth / maxHeight > aspectRatio) {
+                    finalHeight = maxHeight;
+                    finalWidth = maxHeight * aspectRatio;
                 } else {
-                    finalWidth = containerWidth;
-                    finalHeight = containerWidth / aspectRatio;
+                    finalWidth = maxWidth;
+                    finalHeight = maxWidth / aspectRatio;
                 }
-                finalWidth = Math.max(finalWidth, 320);
-                finalHeight = Math.max(finalHeight, 480);
+                
+                // Ensure minimum size but cap for mobile
+                finalWidth = Math.max(Math.min(finalWidth, isMobile ? 360 : 480), 280);
+                finalHeight = Math.max(Math.min(finalHeight, isMobile ? 640 : 853), 498);
                 const dpr = window.devicePixelRatio || 1;
                 canvas.style.width = `${finalWidth}px`;
                 canvas.style.height = `${finalHeight}px`;
@@ -257,6 +265,9 @@ export function PlaytokGameCanvas({ gameId, onScoreUpdate, onGameEnd }) {
         position: 'relative',
         overflow: 'hidden',
         backgroundColor: '#000',
+        maxWidth: '100vw',
+        maxHeight: '100vh',
+        touchAction: 'none',
     };
 
     const canvasStyle = {
@@ -321,10 +332,10 @@ export function PlaytokGameCanvas({ gameId, onScoreUpdate, onGameEnd }) {
                 ref={canvasRef}
                 style={canvasStyle}
             />
-            {instructions && (
+            {false && instructions && (
                 <div style={{
                     position: 'absolute',
-                    bottom: '10px',
+                    top: '90px',
                     left: '50%',
                     transform: 'translateX(-50%)',
                     background: 'linear-gradient(145deg, rgba(26, 10, 45, 0.9) 0%, rgba(15, 10, 26, 0.95) 50%, rgba(45, 26, 61, 0.9) 100%)',

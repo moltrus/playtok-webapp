@@ -6,7 +6,7 @@ const games = [
   { id: 'memory-flip', name: 'Memory Flip', costCoins: 6, rewardCoins: 14, preview: 'memory-flip.png' },
   { id: 'fruit-slice', name: 'Fruit Slice', costCoins: 7, rewardCoins: 16, preview: 'fruit-slice.png' },
   { id: 'stack-tower', name: 'Stack Tower', costCoins: 8, rewardCoins: 18, preview: 'stack-tower.png' },
-  { id: 'bubble-pop', name: 'Bubble Pop', costCoins: 5, rewardCoins: 12, preview: 'bubble-pop.png' },
+  // { id: 'bubble-pop', name: 'Bubble Pop', costCoins: 5, rewardCoins: 12, preview: 'bubble-pop.png' },
   { id: 'maze-escape', name: 'Maze Escape', costCoins: 9, rewardCoins: 20, preview: 'maze-escape.png' },
   { id: 'quiz-blitz', name: 'Quiz Blitz', costCoins: 5, rewardCoins: 11, preview: 'quiz-blitz.png' },
   { id: 'ball-bounce', name: 'Ball Bounce', costCoins: 5, rewardCoins: 11, preview: 'ball-bounce.png' },
@@ -26,7 +26,7 @@ const games = [
   { id: 'orbit-catch', name: 'Orbit Catch', costCoins: 5, rewardCoins: 12, preview: 'orbit-catch.png' },
   { id: 'gravity-flip', name: 'Gravity Flip', costCoins: 8, rewardCoins: 19, preview: 'gravity-flip.png' },
   { id: 'ninja-slice', name: 'Ninja Slice', costCoins: 7, rewardCoins: 16, preview: 'ninja-slice.png' },
-  { id: 'balloon-pop-frenzy', name: 'Balloon Pop Frenzy', costCoins: 6, rewardCoins: 15, preview: 'balloon-pop.png' },
+  // { id: 'balloon-pop-frenzy', name: 'Balloon Pop Frenzy', costCoins: 6, rewardCoins: 15, preview: 'balloon-pop.png' },
 ];
 
 export default games;

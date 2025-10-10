@@ -54,6 +54,7 @@ export class ColorMatchTapGame extends BaseGame {
 
     update() {
         if (!this.isRunning) return;
+        console.log('ColorMatchTapGame update called, circles:', this.circles.length);
 
         const currentTime = Date.now();
         const deltaTime = currentTime - this.lastTime;
@@ -102,8 +103,14 @@ export class ColorMatchTapGame extends BaseGame {
             let x, y;
             
             while (!valid && attempts < maxAttempts) {
+                // Responsive spawn area
+                const isMobile = this.logicalWidth < 400;
+                const uiScale = isMobile ? 0.8 : 1;
+                const topMargin = 120 * uiScale; // Account for UI at top
+                const bottomMargin = 80 * uiScale; // Account for streak display
+                
                 x = Math.random() * (this.logicalWidth - this.circleRadius * 2) + this.circleRadius;
-                y = Math.random() * (this.logicalHeight - 150 - this.circleRadius * 2) + this.circleRadius + 100;
+                y = Math.random() * (this.logicalHeight - topMargin - bottomMargin - this.circleRadius * 2) + this.circleRadius + topMargin;
                 
                 valid = true;
                 // Check overlap with existing circles
@@ -209,10 +216,12 @@ export class ColorMatchTapGame extends BaseGame {
         
         this.ctx.clearRect(0, 0, this.logicalWidth, this.logicalHeight);
         
-        // Background gradient
+        // Balanced gradient background
         const gradient = this.ctx.createLinearGradient(0, 0, 0, this.logicalHeight);
-        gradient.addColorStop(0, '#2C3E50');
-        gradient.addColorStop(1, '#243240');
+        gradient.addColorStop(0, '#4a90e2');    // Soft blue
+        gradient.addColorStop(0.3, '#5b2c6f');  // Deep purple
+        gradient.addColorStop(0.7, '#2c5aa0');  // Medium blue
+        gradient.addColorStop(1, '#1e3a5f');    // Dark navy
         this.ctx.fillStyle = gradient;
         this.ctx.fillRect(0, 0, this.logicalWidth, this.logicalHeight);
         
@@ -229,33 +238,47 @@ export class ColorMatchTapGame extends BaseGame {
             this.drawParticle(particle);
         }
         
-        // UI
-        this.drawText(`Score: ${this.score}`, 10, 30, 20, 'white', 'left');
-        this.drawText(`Time: ${Math.max(0, Math.ceil(this.timeRemaining / 1000))}s`, this.logicalWidth - 10, 30, 20, 'white', 'right');
+        // UI - responsive positioning
+        const isMobile = this.logicalWidth < 400;
+        const uiScale = isMobile ? 0.8 : 1;
+        const scoreFontSize = Math.max(14, 20 * uiScale);
+        const timeFontSize = Math.max(14, 20 * uiScale);
+        const streakFontSize = Math.max(12, 16 * uiScale);
+        
+        this.drawText(`Score: ${this.score}`, 10, 30 * uiScale, scoreFontSize, 'white', 'left');
+        this.drawText(`Time: ${Math.max(0, Math.ceil(this.timeRemaining / 1000))}s`, this.logicalWidth - 10, 30 * uiScale, timeFontSize, 'white', 'right');
         
         // Draw streak
         if (this.streak > 0) {
-            this.drawText(`Streak: ${this.streak}`, this.logicalWidth / 2, this.logicalHeight - 30, 16, '#FFD700');
+            this.drawText(`Streak: ${this.streak}`, this.logicalWidth / 2, this.logicalHeight - (30 * uiScale), streakFontSize, '#FFD700');
         }
     }
     
     drawTargetColorDisplay() {
+        // Responsive positioning
+        const isMobile = this.logicalWidth < 400;
+        const uiScale = isMobile ? 0.8 : 1;
+        const headerHeight = 60 * uiScale;
+        const topOffset = 50 * uiScale;
+        const circleRadius = Math.max(12, 15 * uiScale);
+        const textSize = Math.max(14, 18 * uiScale);
+        
         // Background for the target color section
         this.ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-        this.ctx.fillRect(0, 50, this.logicalWidth, 60);
+        this.ctx.fillRect(0, topOffset, this.logicalWidth, headerHeight);
         
         // Draw text
-        this.drawText('Match this color:', this.logicalWidth / 2, 70, 18, 'white');
+        this.drawText('Match this color:', this.logicalWidth / 2, topOffset + (20 * uiScale), textSize, 'white');
         
         // Draw target color circle
         this.ctx.fillStyle = this.targetColor.hex;
         this.ctx.beginPath();
-        this.ctx.arc(this.logicalWidth / 2, 95, 15, 0, 2 * Math.PI);
+        this.ctx.arc(this.logicalWidth / 2, topOffset + (45 * uiScale), circleRadius, 0, 2 * Math.PI);
         this.ctx.fill();
         
         // Add outline
         this.ctx.strokeStyle = 'white';
-        this.ctx.lineWidth = 2;
+        this.ctx.lineWidth = Math.max(1, 2 * uiScale);
         this.ctx.stroke();
     }
 
@@ -312,13 +335,16 @@ export class ColorMatchTapGame extends BaseGame {
     }
 
     checkTap(x, y) {
+        console.log('ColorMatchTapGame checkTap called with coordinates:', x, y, 'circles count:', this.circles.length);
         // Check each circle to see if it was tapped
         for (let i = this.circles.length - 1; i >= 0; i--) {
             const circle = this.circles[i];
             const distance = Math.sqrt((x - circle.x) ** 2 + (y - circle.y) ** 2);
+            console.log('Checking circle at', circle.x, circle.y, 'distance:', distance, 'radius:', circle.radius * circle.scale);
             
             // If tap is within the circle
             if (distance <= circle.radius * circle.scale) {
+                console.log('Circle tapped! Color index:', circle.colorIndex, 'target:', this.targetColorIndex);
                 this.circles.splice(i, 1); // Remove the circle
                 
                 // Check if the color matches the target
@@ -347,6 +373,7 @@ export class ColorMatchTapGame extends BaseGame {
             }
         }
         
+        console.log('No circle tapped');
         return false;
     }
 
@@ -377,20 +404,10 @@ export class ColorMatchTapGame extends BaseGame {
 
     handleTouchStart(e) {
         super.handleTouchStart(e);
-        
-        if (!this.isRunning) return;
-        
-        const pos = this.getTouchPos(e);
-        this.checkTap(pos.x, pos.y);
     }
 
     handleMouseDown(e) {
         super.handleMouseDown(e);
-        
-        if (!this.isRunning) return;
-        
-        const pos = this.getMousePos(e);
-        this.checkTap(pos.x, pos.y);
     }
 
     getTouchPos(e) {

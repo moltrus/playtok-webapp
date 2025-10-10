@@ -143,12 +143,47 @@ export class QuickTapGame extends BaseGame {
     draw() {
         this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
         
-        // Background
+        // Background - Magical gem cave
         const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvasHeight);
-        gradient.addColorStop(0, '#2C3E50');
-        gradient.addColorStop(1, '#4A6741');
+        gradient.addColorStop(0, '#1A0D2E');  // Deep purple cave top
+        gradient.addColorStop(0.4, '#2D1B3D'); // Rich purple middle
+        gradient.addColorStop(0.7, '#3E1065'); // Darker purple
+        gradient.addColorStop(1, '#1F0A2E');   // Very dark purple bottom
         this.ctx.fillStyle = gradient;
         this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+        
+        // Add cave crystals/gems in background
+        this.ctx.globalAlpha = 0.15;
+        for (let i = 0; i < 30; i++) {
+            const x = (i * 167) % this.canvasWidth;
+            const y = (i * 193) % this.canvasHeight;
+            const size = ((i * 31) % 8) + 4;
+            const hue = (i * 47) % 360;
+            this.ctx.fillStyle = `hsl(${hue}, 80%, 70%)`;
+            this.ctx.save();
+            this.ctx.translate(x, y);
+            this.ctx.rotate((i * 23) * Math.PI / 180);
+            this.ctx.fillRect(-size/2, -size/2, size, size);
+            this.ctx.restore();
+        }
+        this.ctx.globalAlpha = 1.0;
+        
+        // Add subtle magical glow veins
+        this.ctx.globalAlpha = 0.08;
+        this.ctx.strokeStyle = '#FFD700';
+        this.ctx.lineWidth = 2;
+        this.ctx.beginPath();
+        this.ctx.moveTo(0, this.canvasHeight * 0.2);
+        this.ctx.quadraticCurveTo(this.canvasWidth * 0.3, this.canvasHeight * 0.4, this.canvasWidth * 0.6, this.canvasHeight * 0.3);
+        this.ctx.quadraticCurveTo(this.canvasWidth * 0.8, this.canvasHeight * 0.2, this.canvasWidth, this.canvasHeight * 0.5);
+        this.ctx.stroke();
+        
+        this.ctx.beginPath();
+        this.ctx.moveTo(0, this.canvasHeight * 0.7);
+        this.ctx.quadraticCurveTo(this.canvasWidth * 0.4, this.canvasHeight * 0.6, this.canvasWidth * 0.7, this.canvasHeight * 0.8);
+        this.ctx.quadraticCurveTo(this.canvasWidth * 0.9, this.canvasHeight * 0.9, this.canvasWidth, this.canvasHeight * 0.7);
+        this.ctx.stroke();
+        this.ctx.globalAlpha = 1.0;
         
         // Draw targets with gem effects
         for (const target of this.targets) {

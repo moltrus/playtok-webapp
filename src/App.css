@@ -750,9 +750,11 @@ html, body, #root, .app-root {
 
 .player-wrapper { 
   min-height: 100vh; 
+  min-height: 100dvh; /* Dynamic viewport height for mobile */
   padding-top: max(48px, env(safe-area-inset-top)); 
   display: flex; 
   flex-direction: column;
+  overflow: hidden; /* Prevent scrolling on mobile */
   background: 
     radial-gradient(circle at center, rgba(138, 43, 226, 0.15) 0%, transparent 40%),
     radial-gradient(circle at 80% 20%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
@@ -832,8 +834,39 @@ html, body, #root, .app-root {
 
 /* Responsive adjustments for different screen sizes */
 @media (max-width: 480px) {
+  .player-wrapper {
+    padding-top: 60px; /* Account for smaller header */
+    overflow: hidden;
+  }
+  
   .player-surface {
-    padding: 10px;
+    padding: 5px;
+    min-height: calc(100vh - 70px);
+    min-height: calc(100dvh - 70px); /* Use dynamic viewport height for mobile */
+    max-height: calc(100vh - 70px);
+    max-height: calc(100dvh - 70px);
+    overflow: hidden;
+  }
+  
+  .player-header {
+    padding: 8px 12px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: 60px;
+    box-sizing: border-box;
+  }
+  
+  .player-header h2 {
+    font-size: 12px;
+  }
+  
+  .player-header button {
+    padding: 8px 12px;
+    font-size: 8px;
+    min-height: 36px;
   }
 }
 
@@ -886,6 +919,25 @@ html, body, #root, .app-root {
 
 /* Hide default scrollbars for neon mobile feel */
 .feed-container::-webkit-scrollbar { width:0; height:0; }
+
+/* Mobile-first improvements */
+* {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body, html {
+  overflow-x: hidden;
+  touch-action: manipulation;
+}
+
+/* Prevent zoom on double tap for game canvases */
+canvas {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
 
 /* Enhanced neon glow effects on larger screens */
 @media (min-width: 600px) {

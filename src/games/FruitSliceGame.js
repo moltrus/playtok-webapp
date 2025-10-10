@@ -288,16 +288,55 @@ export class FruitSliceGame extends BaseGame {
             // Clear canvas
             this.ctx.clearRect(0, 0, canvasWidth, canvasHeight);
             
-            // Background
+            // Background - Tree bark with lighter streaks
             try {
-                const gradient = this.ctx.createLinearGradient(0, 0, 0, canvasHeight);
-                gradient.addColorStop(0, '#87CEEB');
-                gradient.addColorStop(1, '#98FB98');
-                this.ctx.fillStyle = gradient;
+                // Base warm brown bark color
+                this.ctx.fillStyle = '#995100';
                 this.ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                
+                // Subtle vertical grain
+                this.ctx.globalAlpha = 0.15;
+                for (let i = 0; i < canvasWidth; i += 15) {
+                    const variation = Math.sin(i * 0.02) * 30;
+                    this.ctx.fillStyle = '#DAA06D';
+                    this.ctx.fillRect(i, 0, 1, canvasHeight + variation);
+                }
+                
+                // Wood knots with medium brown tones
+                const knots = [
+                    {x: canvasWidth * 0.2, y: canvasHeight * 0.3, size: 15},
+                    {x: canvasWidth * 0.7, y: canvasHeight * 0.6, size: 12},
+                    {x: canvasWidth * 0.4, y: canvasHeight * 0.8, size: 10},
+                    {x: canvasWidth * 0.8, y: canvasHeight * 0.2, size: 8}
+                ];
+                
+                for (const knot of knots) {
+                    this.ctx.fillStyle = 'rgba(101, 67, 33, 0.3)';
+                    this.ctx.globalAlpha = 0.3;
+                    this.ctx.beginPath();
+                    this.ctx.ellipse(knot.x, knot.y, knot.size, knot.size * 0.6, 0, 0, 2 * Math.PI);
+                    this.ctx.fill();
+                    
+                    // Inner knot
+                    this.ctx.fillStyle = 'rgba(83, 53, 10, 0.2)';
+                    this.ctx.beginPath();
+                    this.ctx.ellipse(knot.x, knot.y, knot.size * 0.5, knot.size * 0.3, 0, 0, 2 * Math.PI);
+                    this.ctx.fill();
+                }
+                
+                // Subtle edge definition
+                this.ctx.globalAlpha = 0.1;
+                this.ctx.fillStyle = '#6B3423';
+                this.ctx.fillRect(0, 0, canvasWidth, 3);
+                this.ctx.fillRect(0, canvasHeight - 3, canvasWidth, 3);
+                this.ctx.fillRect(0, 0, 3, canvasHeight);
+                this.ctx.fillRect(canvasWidth - 3, 0, 3, canvasHeight);
+                
+                this.ctx.globalAlpha = 1.0;
+                
             } catch (gradientError) {
                 // Fallback if gradient fails
-                this.ctx.fillStyle = '#87CEEB';
+                this.ctx.fillStyle = '#D2B48C';
                 this.ctx.fillRect(0, 0, canvasWidth, canvasHeight);
             }
             
@@ -356,7 +395,7 @@ export class FruitSliceGame extends BaseGame {
 
     drawSliceTrail() {
         if (this.sliceTrail.length > 1) {
-            this.ctx.strokeStyle = 'rgba(0, 255, 255, 0.8)';
+            this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
             this.ctx.lineWidth = 4;
             this.ctx.lineCap = 'round';
             this.ctx.beginPath();

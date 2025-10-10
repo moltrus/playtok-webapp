@@ -30,7 +30,20 @@ const defaultGameStats = (base) => {
 function buildInitialState(gamesSeed) {
   const list = gamesSeed || fallbackGames;
   const state = { coins: 100, games: {}, likedGames: new Set() };
-  list.filter(g => g.id !== 'tap-jump' && g.id !== 'tilt-maze')
+  const hiddenGames = [
+    'tap-jump', 
+    'tilt-maze',
+    'bubble-pop',
+    'tap-dash',
+    'balloon-pop-frenzy',
+    'reaction-arrows',
+    'stack-cups',
+    'shadow-match',
+    'speed-tap-numbers',
+    'lane-switcher',
+    'tap-timer'
+  ];
+  list.filter(g => !hiddenGames.includes(g.id))
       .forEach(g => { state.games[g.id] = defaultGameStats(g.base); });
   return state;
 }
@@ -193,7 +206,20 @@ export function GameProvider({ children }) {
         const newGames = gamesResponse.games
           .filter(g => {
             const normalizedId = g.id.replace(/_/g, '-');
-            return normalizedId !== 'tap-jump' && normalizedId !== 'tilt-maze';
+            const hiddenGames = [
+              'tap-jump', 
+              'tilt-maze',
+              'bubble-pop',
+              'tap-dash',
+              'balloon-pop-frenzy',
+              'reaction-arrows',
+              'stack-cups',
+              'shadow-match',
+              'speed-tap-numbers',
+              'lane-switcher',
+              'tap-timer'
+            ];
+            return !hiddenGames.includes(normalizedId);
           })
           .map(g => transformGameData(g));
         
@@ -246,7 +272,20 @@ export function GameProvider({ children }) {
           const transformed = gamesResponse.games
             .filter(g => {
               const normalizedId = g.id.replace(/_/g, '-');
-              return normalizedId !== 'tap-jump' && normalizedId !== 'tilt-maze';
+              const hiddenGames = [
+                'tap-jump', 
+                'tilt-maze',
+                'bubble-pop',
+                'tap-dash',
+                'balloon-pop-frenzy',
+                'reaction-arrows',
+                'stack-cups',
+                'shadow-match',
+                'speed-tap-numbers',
+                'lane-switcher',
+                'tap-timer'
+              ];
+              return !hiddenGames.includes(normalizedId);
             })
             .map(g => transformGameData(g));
           
