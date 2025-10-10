@@ -36,7 +36,7 @@ export class ShapeBuilderGame extends BaseGame {
         this.draggedShape = null;
         this.dragOffsetX = 0;
         this.dragOffsetY = 0;
-        this.snapTolerance = 30; // Increased from 15 to 30 for much easier shape placement
+        this.snapTolerance = 150; // Increased tolerance for better snapping
         this.score = 0;
         
         // Define shape colors
@@ -302,19 +302,30 @@ export class ShapeBuilderGame extends BaseGame {
         this.ctx.shadowOffsetX = 0;
         this.ctx.shadowOffsetY = 0;
         
-        // Draw UI (score, timer) with improved visibility
+        // Draw UI (score, timer) with improved visibility and responsive font size
         this.ctx.fillStyle = '#000000';
-        this.ctx.font = 'bold 24px Arial'; // Bigger and bolder font
+        
+        // Responsive font size based on canvas width
+        let fontSize;
+        if (this.canvasWidth <= 320) {
+            fontSize = 16; // Smaller font for very small screens
+        } else if (this.canvasWidth <= 768) {
+            fontSize = 20; // Medium font for tablets
+        } else {
+            fontSize = 24; // Default font for desktop
+        }
+        
+        this.ctx.font = `bold ${fontSize}px Arial`;
         this.ctx.textAlign = 'left';
-        this.ctx.fillText(`Score: ${this.score}`, 10, 30);
+        this.ctx.fillText(`Score: ${this.score}`, 10, fontSize + 6);
         
         this.ctx.textAlign = 'right';
         const secondsLeft = Math.ceil(this.timeRemaining / 1000);
-        this.ctx.fillText(`Time: ${secondsLeft}s`, this.canvasWidth - 10, 30);
+        this.ctx.fillText(`Time: ${secondsLeft}s`, this.canvasWidth - 10, fontSize + 6);
         
         // Draw progress
         this.ctx.textAlign = 'center';
-        this.ctx.fillText(`Shapes: ${this.shapesPlaced}/${this.totalShapes}`, this.canvasWidth / 2, 30);
+        this.ctx.fillText(`Shapes: ${this.shapesPlaced}/${this.totalShapes}`, this.canvasWidth / 2, fontSize + 6);
     }
     
     drawShape(type, x, y, width, height, isOutline) {
@@ -432,21 +443,19 @@ export class ShapeBuilderGame extends BaseGame {
         const shape = this.shapes[shapeIndex];
         const targetOutline = this.targetOutlines[shape.targetIndex];
         
-        // Calculate center distance between shape and its target outline
-        const shapeCenterX = shape.x + shape.width / 2;
-        const shapeCenterY = shape.y + shape.height / 2;
-        const targetCenterX = targetOutline.x + targetOutline.width / 2;
-        const targetCenterY = targetOutline.y + targetOutline.height / 2;
+        // Check for overlap between shape and target outline bounding boxes
+        const overlapX = Math.max(0, Math.min(shape.x + shape.width, targetOutline.x + targetOutline.width) - Math.max(shape.x, targetOutline.x));
+        const overlapY = Math.max(0, Math.min(shape.y + shape.height, targetOutline.y + targetOutline.height) - Math.max(shape.y, targetOutline.y));
+        const overlapArea = overlapX * overlapY;
+        const shapeArea = shape.width * shape.height;
         
-        const distance = Math.sqrt(
-            Math.pow(shapeCenterX - targetCenterX, 2) + 
-            Math.pow(shapeCenterY - targetCenterY, 2)
-        );
+        // Require at least 50% overlap for snapping
+        const overlapRatio = overlapArea / shapeArea;
         
-        console.log(`Shape ${shapeIndex} distance to target: ${distance}px, tolerance: ${this.snapTolerance}px`);
+        console.log(`Shape ${shapeIndex} overlap with target: ${(overlapRatio * 100).toFixed(1)}%`);
         
-        // If close enough, snap to position
-        if (distance < this.snapTolerance) {
+        // If significant overlap, snap to position
+        if (overlapRatio >= 0.5) {
             // Snap the shape to the outline
             shape.x = targetOutline.x;
             shape.y = targetOutline.y;
@@ -470,18 +479,18 @@ export class ShapeBuilderGame extends BaseGame {
             if (i === shape.targetIndex || this.targetOutlines[i].matched) continue;
             
             const otherOutline = this.targetOutlines[i];
-            const otherCenterX = otherOutline.x + otherOutline.width / 2;
-            const otherCenterY = otherOutline.y + otherOutline.height / 2;
             
-            const otherDistance = Math.sqrt(
-                Math.pow(shapeCenterX - otherCenterX, 2) + 
-                Math.pow(shapeCenterY - otherCenterY, 2)
-            );
+            // Check for overlap with wrong outline
+            const overlapX = Math.max(0, Math.min(shape.x + shape.width, otherOutline.x + otherOutline.width) - Math.max(shape.x, otherOutline.x));
+            const overlapY = Math.max(0, Math.min(shape.y + shape.height, otherOutline.y + otherOutline.height) - Math.max(shape.y, otherOutline.y));
+            const overlapArea = overlapX * overlapY;
+            const shapeArea = shape.width * shape.height;
+            const overlapRatio = overlapArea / shapeArea;
             
-            if (otherDistance < this.snapTolerance) {
+            if (overlapRatio >= 0.5) {
                 // Penalize for incorrect placement
                 this.score = Math.max(0, this.score - 2);
-                console.log(`Shape ${shapeIndex} placed incorrectly on outline ${i}!`);
+                console.log(`Shape ${shapeIndex} placed incorrectly on outline ${i}! Overlap: ${(overlapRatio * 100).toFixed(1)}%`);
                 return false;
             }
         }
@@ -593,21 +602,19 @@ export class ShapeBuilderGame extends BaseGame {
             
             // Check proximity to correct target for highlighting
             const targetOutline = this.targetOutlines[shape.targetIndex];
-            const shapeCenterX = shape.x + shape.width / 2;
-            const shapeCenterY = shape.y + shape.height / 2;
-            const targetCenterX = targetOutline.x + targetOutline.width / 2;
-            const targetCenterY = targetOutline.y + targetOutline.height / 2;
             
-            const distance = Math.sqrt(
-                Math.pow(shapeCenterX - targetCenterX, 2) + 
-                Math.pow(shapeCenterY - targetCenterY, 2)
-            );
+            // Check for overlap between shape and target outline bounding boxes
+            const overlapX = Math.max(0, Math.min(shape.x + shape.width, targetOutline.x + targetOutline.width) - Math.max(shape.x, targetOutline.x));
+            const overlapY = Math.max(0, Math.min(shape.y + shape.height, targetOutline.y + targetOutline.height) - Math.max(shape.y, targetOutline.y));
+            const overlapArea = overlapX * overlapY;
+            const shapeArea = shape.width * shape.height;
+            const overlapRatio = overlapArea / shapeArea;
             
             // When getting close to the target, give visual feedback
-            if (distance < this.snapTolerance * 1.5) {
+            if (overlapRatio >= 0.3) { // 30% overlap for visual feedback
                 // Log only when first getting close
-                if (distance < this.snapTolerance * 2 && distance > this.snapTolerance * 1.5) {
-                    console.log(`Shape getting close to target! Distance: ${distance.toFixed(1)}px`);
+                if (overlapRatio >= 0.4 && overlapRatio < 0.5) {
+                    console.log(`Shape getting close to target! Overlap: ${(overlapRatio * 100).toFixed(1)}%`);
                 }
             }
         }

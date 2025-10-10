@@ -356,7 +356,7 @@ export class FruitSliceGame extends BaseGame {
             this.drawText(`Score: ${this.score}`, 10, 30, 20, 'black', 'left');
             this.drawText(`Misses: ${this.misses}/${this.maxMisses}`, 10, 60, 20, 'red', 'left');
             this.drawText(`Time: ${Math.max(0, Math.ceil(this.timeRemaining / 1000))}s`, canvasWidth - 10, 30, 20, 'black', 'right');
-            this.drawText('🍎 Slice the fruits! 🍌', canvasWidth / 2, canvasHeight - 30, 16, '#2E8B57');
+            this.drawText('🍎 Slice the juicy fruits! Don\'t miss 3 times! 🍌', canvasWidth / 2, canvasHeight - 30, 16, '#4bddf7ff');
         } catch (error) {
             console.error('Error in FruitSliceGame.draw():', error);
         }
