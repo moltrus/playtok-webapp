@@ -41,7 +41,16 @@ function buildInitialState(gamesSeed) {
     'shadow-match',
     'speed-tap-numbers',
     'lane-switcher',
-    'tap-timer'
+    'tap-timer',
+    'tower-balance',
+    'spot-difference',
+    'flip-runner',
+    'tap-the-odd',
+    'pair-connect',
+    'rocket-avoid',
+    'color-sequence',
+    'whack-a-mole',
+    'brick-breaker-mini'
   ];
   list.filter(g => !hiddenGames.includes(g.id))
       .forEach(g => { state.games[g.id] = defaultGameStats(g.base); });
@@ -217,7 +226,16 @@ export function GameProvider({ children }) {
               'shadow-match',
               'speed-tap-numbers',
               'lane-switcher',
-              'tap-timer'
+              'tap-timer',
+              'tower-balance',
+              'spot-difference',
+              'flip-runner',
+              'tap-the-odd',
+              'pair-connect',
+              'rocket-avoid',
+              'color-sequence',
+              'whack-a-mole',
+              'brick-breaker-mini'
             ];
             return !hiddenGames.includes(normalizedId);
           })
@@ -283,7 +301,16 @@ export function GameProvider({ children }) {
                 'shadow-match',
                 'speed-tap-numbers',
                 'lane-switcher',
-                'tap-timer'
+                'tap-timer',
+                'tower-balance',
+                'spot-difference',
+                'flip-runner',
+                'tap-the-odd',
+                'pair-connect',
+                'rocket-avoid',
+                'color-sequence',
+                'whack-a-mole',
+                'brick-breaker-mini'
               ];
               return !hiddenGames.includes(normalizedId);
             })

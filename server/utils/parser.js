@@ -76,7 +76,16 @@ const parseGamesCsv = (csvString) => {
         'shadow-match',
         'speed-tap-numbers',
         'lane-switcher',
-        'tap-timer'
+        'tap-timer',
+        'tower-balance',
+        'spot-difference',
+        'flip-runner',
+        'tap-the-odd',
+        'pair-connect',
+        'rocket-avoid',
+        'color-sequence',
+        'whack-a-mole',
+        'brick-breaker-mini'
       ];
       return !hiddenGames.includes(game.id);
     });
