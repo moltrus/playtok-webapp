@@ -70,7 +70,7 @@ export class ShapeBuilderGame extends BaseGame {
     }
 
     getInstructions() {
-        return "Drag shapes to match the outlines. Correctly placed shapes snap into position!";
+        return "Drag shapes to match the outlines!";
     }
 
     start() {
@@ -326,6 +326,21 @@ export class ShapeBuilderGame extends BaseGame {
         // Draw progress
         this.ctx.textAlign = 'center';
         this.ctx.fillText(`Shapes: ${this.shapesPlaced}/${this.totalShapes}`, this.canvasWidth / 2, fontSize + 6);
+
+        const instructionCopy = this.getInstructions?.() || '';
+        if (instructionCopy) {
+            const targetFont = Math.max(0, fontSize - 8);
+            const instructionFont = Math.max(10, Math.floor(targetFont * 0.5));
+            this.ctx.save();
+            this.ctx.font = `600 ${instructionFont}px Arial`;
+            this.ctx.fillStyle = '#333333';
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'bottom';
+            this.ctx.shadowColor = 'rgba(0, 0, 0, 0.12)';
+            this.ctx.shadowBlur = 4;
+            this.ctx.fillText(instructionCopy, this.canvasWidth / 2, this.canvasHeight - 12);
+            this.ctx.restore();
+        }
     }
     
     drawShape(type, x, y, width, height, isOutline) {

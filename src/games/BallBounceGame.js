@@ -219,6 +219,11 @@ export class BallBounceGame extends BaseGame {
                 // Score
                 this.drawText(`SCORE: ${this.score}`, canvasWidth / 2, 40, 24, 'white');
             }
+
+            const instructionCopy = this.getInstructions?.() || '';
+            if (instructionCopy) {
+                this.drawText(instructionCopy, canvasWidth / 2, canvasHeight - 24, 18, '#00FFF0');
+            }
         } catch (error) {
             console.error('Error in BallBounceGame.draw():', error);
             // Don't stop the game for a single frame error

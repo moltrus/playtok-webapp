@@ -252,6 +252,13 @@ export class ColorMatchTapGame extends BaseGame {
         if (this.streak > 0) {
             this.drawText(`Streak: ${this.streak}`, this.logicalWidth / 2, this.logicalHeight - (30 * uiScale), streakFontSize, '#FFD700');
         }
+
+        const instructionCopy = this.getInstructions?.() || '';
+        if (instructionCopy) {
+            const instructionFontSize = Math.max(12, 16 * uiScale);
+            const instructionY = this.logicalHeight - (instructionFontSize / 2) - 8;
+            this.drawText(instructionCopy, this.logicalWidth / 2, instructionY, instructionFontSize, '#00FFF0');
+        }
     }
     
     drawTargetColorDisplay() {

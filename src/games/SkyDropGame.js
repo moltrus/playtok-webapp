@@ -95,7 +95,7 @@ export class SkyDropGame extends BaseGame {
     }
 
     getInstructions() {
-        return "Drag horizontally to avoid obstacles as you free-fall. Collect coins for bonus points!";
+        return "Drag horizontally to avoid obstacles as you free-fall!";
     }
 
     start() {
@@ -310,6 +310,19 @@ export class SkyDropGame extends BaseGame {
         // Draw distance indicator
         this.ctx.textAlign = 'center';
         this.ctx.fillText(`Altitude: ${Math.floor(this.distance / 10)}m`, this.canvasWidth / 2, 30);
+
+        const instructionCopy = this.getInstructions?.() || '';
+        if (instructionCopy) {
+            this.ctx.save();
+            this.ctx.font = '600 18px Arial';
+            this.ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'bottom';
+            this.ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+            this.ctx.shadowBlur = 8;
+            this.ctx.fillText(instructionCopy, this.canvasWidth / 2, this.canvasHeight - 18);
+            this.ctx.restore();
+        }
     }
     
     drawScrollingLines() {

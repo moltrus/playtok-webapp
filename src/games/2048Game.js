@@ -441,7 +441,7 @@ class KeyboardInputManager {
 }
 
 class CanvasActuator {
-	constructor(canvas, ctx, scoreCallback) {
+	constructor(canvas, ctx, scoreCallback, instructionText = '') {
 		this.canvas = canvas;
 		this.ctx = ctx;
 		this.scoreCallback = scoreCallback;
@@ -451,6 +451,7 @@ class CanvasActuator {
 		this.bestScore = 0;
 		this.animationFrameId = null;
 		this.animationDuration = 160;
+		this.instructionText = instructionText;
 	}
 
 	actuate(grid, metadata) {
@@ -633,6 +634,8 @@ class CanvasActuator {
 		const mergeTiles = animationState.tiles.filter(tile => tile.isMergeResult);
 		regularTiles.forEach(tile => this.drawAnimatedTile(tile, progress));
 		mergeTiles.forEach(tile => this.drawAnimatedTile(tile, progress));
+
+		this.drawInstructions();
 
 		if (metadata && metadata.terminated) {
 			// Overlay handled by PlayTok, so only optionally render fallback copy when needed.
@@ -874,13 +877,32 @@ class CanvasActuator {
 		this.bestScore = score;
 	}
 
+	drawInstructions() {
+		if (!this.instructionText || !this.ctx) {
+			return;
+		}
+
+		const { width, height, tile } = this.metrics;
+		const fontSize = Math.max(12, Math.min(18, Math.floor(tile * 0.32)));
+
+		this.ctx.save();
+		this.ctx.font = `${fontSize}px ${BOARD_THEME.fontFamily}`;
+		this.ctx.fillStyle = '#00ffff';
+		this.ctx.textAlign = 'center';
+		this.ctx.textBaseline = 'bottom';
+		this.ctx.shadowColor = OVERLAY_GLOW;
+		this.ctx.shadowBlur = 10;
+		this.ctx.fillText(this.instructionText, width / 2, height - 20);
+		this.ctx.restore();
+	}
+
 	continueGame() {
 		// Overlay clears as part of re-render.
 	}
 }
 
 class PixiActuator {
-	constructor(app, stage, scoreCallback) {
+	constructor(app, stage, scoreCallback, instructionText = '') {
 		if (!safeWindow || !safeWindow.PIXI) {
 			throw new Error('PIXI not available.');
 		}
@@ -888,13 +910,16 @@ class PixiActuator {
 		this.app = app;
 		this.stage = stage;
 		this.scoreCallback = scoreCallback;
+		this.instructionText = instructionText;
 		this.gridGraphics = new safeWindow.PIXI.Graphics();
 		this.tileContainer = new safeWindow.PIXI.Container();
 		this.textContainer = new safeWindow.PIXI.Container();
+		this.instructionLabel = null;
 		this.stage.addChild(this.gridGraphics);
 		this.stage.addChild(this.tileContainer);
 		this.stage.addChild(this.textContainer);
 		this.drawGrid();
+		this.ensureInstructionLabel();
 	}
 
 	drawGrid() {
@@ -925,6 +950,7 @@ class PixiActuator {
 	actuate(grid, metadata) {
 		this.tileContainer.removeChildren();
 		this.textContainer.removeChildren();
+		this.ensureInstructionLabel();
 
 		grid.cells.forEach(column => {
 			column.forEach(tile => {
@@ -969,6 +995,47 @@ class PixiActuator {
 
 		this.updateScore(metadata.score);
 		this.updateBestScore(metadata.bestScore);
+	}
+
+	ensureInstructionLabel() {
+		if (!this.instructionText) {
+			if (this.instructionLabel && this.instructionLabel.parent) {
+				this.stage.removeChild(this.instructionLabel);
+			}
+			if (this.instructionLabel && typeof this.instructionLabel.destroy === 'function') {
+				this.instructionLabel.destroy();
+			}
+			this.instructionLabel = null;
+			return;
+		}
+
+		const renderer = this.app && this.app.renderer ? this.app.renderer : null;
+		const width = renderer ? renderer.width / renderer.resolution : 360;
+		const height = renderer ? renderer.height / renderer.resolution : 640;
+		const fontFamily = BOARD_THEME.fontFamily.replace(/"/g, '');
+
+		if (!this.instructionLabel) {
+			const textStyle = new safeWindow.PIXI.TextStyle({
+				fontSize: 16,
+				fill: 0x00ffff,
+				fontFamily,
+				fontWeight: '600',
+				dropShadow: true,
+				dropShadowColor: 0x00ffff,
+				dropShadowBlur: 6,
+				dropShadowDistance: 0
+			});
+			this.instructionLabel = new safeWindow.PIXI.Text(this.instructionText, textStyle);
+			this.instructionLabel.anchor.set(0.5, 1);
+			this.stage.addChild(this.instructionLabel);
+		} else {
+			this.instructionLabel.text = this.instructionText;
+			this.instructionLabel.style.fontSize = 16;
+			this.instructionLabel.style.dropShadowBlur = 6;
+		}
+
+		this.instructionLabel.x = width / 2;
+		this.instructionLabel.y = height - 20;
 	}
 
 	updateScore(score) {
@@ -1293,10 +1360,10 @@ export class Game2048 extends BaseGame {
 
 	createActuator() {
 		if (this.app && this.stage && safeWindow && safeWindow.PIXI) {
-			return new PixiActuator(this.app, this.stage, score => this.updateScore(score));
+			return new PixiActuator(this.app, this.stage, score => this.updateScore(score), this.getInstructions());
 		}
 		if (this.canvas && this.ctx) {
-			return new CanvasActuator(this.canvas, this.ctx, score => this.updateScore(score));
+			return new CanvasActuator(this.canvas, this.ctx, score => this.updateScore(score), this.getInstructions());
 		}
 		throw new Error('No rendering surface available for 2048.');
 	}

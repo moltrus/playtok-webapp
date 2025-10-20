@@ -52,7 +52,7 @@ export class DodgeGame extends BaseGame {
     }
 
     getInstructions() {
-        return "😊 Drag to dodge the angry red faces! 😠 Avoid the grumpy ones!";
+        return "😊 Drag to dodge the angry red and grumpy faces! 😠";
     }
 
     start() {
@@ -273,8 +273,31 @@ export class DodgeGame extends BaseGame {
             // UI
             this.drawText(`Score: ${this.score}`, 10, 30, 20, 'white', 'left');
             this.drawText(`Time: ${Math.max(0, Math.ceil(this.timeRemaining / 1000))}s`, canvasWidth - 10, 30, 20, 'white', 'right');
+
+            const instructionCopy = this.getInstructions?.() || '';
+            if (instructionCopy) {
+                this.drawText(instructionCopy, canvasWidth / 2, canvasHeight - 24, 18, '#FFD700', 'center');
+            }
         } catch (error) {
             console.error('Error in DodgeGame.draw():', error);
+        }
+    }
+    drawText(text, x, y, size, color, align = 'center') {
+        try {
+            if (!this.ctx) {
+                return;
+            }
+            this.ctx.save();
+            this.ctx.font = `${size}px Arial`;
+            this.ctx.fillStyle = color;
+            this.ctx.textAlign = align;
+            this.ctx.textBaseline = 'middle';
+            this.ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
+            this.ctx.shadowBlur = 6;
+            this.ctx.fillText(text, x, y);
+            this.ctx.restore();
+        } catch (error) {
+            console.error('Error in drawText:', error);
         }
     }
 
