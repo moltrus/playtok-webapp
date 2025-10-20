@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
 import fallbackGames from '../data/games';
 import { fetchGames, fetchStats } from '../services/gameService';
+import { gameRegistry } from '../utils/gameRegistry';
 
 /*
 GameContext responsibilities:
@@ -13,6 +14,48 @@ GameContext responsibilities:
 
 const STORAGE_KEY = 'playtok_v1_state';
 const AUTO_GROW_INTERVAL_MS = 8000;
+
+const normalizeGameId = (id) => id.replace(/_/g, '-');
+
+const CURATED_GAME_IDS = fallbackGames.map(game => normalizeGameId(game.id));
+const CURATED_GAME_SET = new Set(CURATED_GAME_IDS);
+
+const mergeGameCollections = (...collections) => {
+  const mergedMap = new Map();
+  const extraOrder = [];
+
+  collections.forEach(collection => {
+    if (!Array.isArray(collection)) return;
+
+    collection.forEach(game => {
+      if (!game || !game.id) return;
+
+      const normalizedId = normalizeGameId(game.id);
+      const current = mergedMap.get(normalizedId) || {};
+      const next = {
+        ...current,
+        ...game,
+        id: normalizedId
+      };
+
+      mergedMap.set(normalizedId, next);
+
+      if (!CURATED_GAME_SET.has(normalizedId) && !extraOrder.includes(normalizedId)) {
+        extraOrder.push(normalizedId);
+      }
+    });
+  });
+
+  const curated = CURATED_GAME_IDS
+    .map(id => mergedMap.get(id))
+    .filter(Boolean);
+
+  const extras = extraOrder
+    .map(id => mergedMap.get(id))
+    .filter(Boolean);
+
+  return [...curated, ...extras];
+};
 
 const defaultGameStats = (base) => {
   const baseStats = base?.baseStats || {};
@@ -42,7 +85,8 @@ function buildInitialState(gamesSeed) {
     'quiz-blitz',
     'color-match-tap',
     'sky-drop',
-    'shape-builder'
+    'shape-builder',
+    '2048-game'
   ];
   list.filter(g => allowedGames.includes(g.id))
       .forEach(g => { state.games[g.id] = defaultGameStats(g.base); });
@@ -52,25 +96,43 @@ function buildInitialState(gamesSeed) {
 const GameContext = createContext(null);
 
 export function GameProvider({ children }) {
-  const [gamesList, setGamesList] = useState(fallbackGames);
+  const [gamesList, setGamesList] = useState(() => mergeGameCollections(fallbackGames));
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMoreGames, setHasMoreGames] = useState(true);
   const [state, setState] = useState(() => {
+    const baseState = buildInitialState(fallbackGames);
+
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const parsed = JSON.parse(raw);
-        // Convert likedGames array back to Set
-        if (parsed.likedGames && Array.isArray(parsed.likedGames)) {
-          parsed.likedGames = new Set(parsed.likedGames);
-        } else {
-          parsed.likedGames = new Set();
-        }
-        return parsed;
+        const parsed = JSON.parse(raw) || {};
+
+        const likedGames = Array.isArray(parsed.likedGames)
+          ? new Set(parsed.likedGames)
+          : parsed.likedGames instanceof Set
+            ? parsed.likedGames
+            : new Set();
+
+        const persistedGames = parsed.games && typeof parsed.games === 'object'
+          ? parsed.games
+          : {};
+
+        const mergedGames = { ...baseState.games, ...persistedGames };
+
+        return {
+          ...baseState,
+          ...parsed,
+          coins: typeof parsed.coins === 'number' ? parsed.coins : baseState.coins,
+          games: mergedGames,
+          likedGames
+        };
       }
-    } catch (e) {  }
-    return buildInitialState(fallbackGames);
+    } catch (e) {
+      // Swallow errors and fall back to base state.
+    }
+
+    return baseState;
   });
 
   useEffect(() => {
@@ -92,6 +154,7 @@ export function GameProvider({ children }) {
     setState(s => {
       const likedGames = new Set(s.likedGames || []);
       const isCurrentlyLiked = likedGames.has(id);
+      const existingStats = s.games[id] || defaultGameStats();
       
       if (isCurrentlyLiked) {
         // Unlike: remove from set and decrement count
@@ -101,7 +164,7 @@ export function GameProvider({ children }) {
           likedGames,
           games: {
             ...s.games,
-            [id]: { ...s.games[id], likes: Math.max(0, s.games[id].likes - 1) }
+            [id]: { ...existingStats, likes: Math.max(0, (existingStats.likes || 0) - 1) }
           }
         };
       } else {
@@ -112,7 +175,7 @@ export function GameProvider({ children }) {
           likedGames,
           games: {
             ...s.games,
-            [id]: { ...s.games[id], likes: s.games[id].likes + 1 }
+            [id]: { ...existingStats, likes: (existingStats.likes || 0) + 1 }
           }
         };
       }
@@ -133,17 +196,22 @@ export function GameProvider({ children }) {
       return false;
     }
     
+    const ensureStats = (statsMap, gameId) => statsMap[gameId] || defaultGameStats();
+
     setState(s => ({
       ...s,
       coins: s.coins - meta.costCoins,
       games: {
         ...s.games,
-        [id]: {
-          ...s.games[id],
-          plays: s.games[id].plays + 1,
-          players: s.games[id].players + 1,
-          coinsSpent: s.games[id].coinsSpent + meta.costCoins
-        }
+        [id]: (() => {
+          const current = ensureStats(s.games, id);
+          return {
+            ...current,
+            plays: (current.plays || 0) + 1,
+            players: (current.players || 0) + 1,
+            coinsSpent: (current.coinsSpent || 0) + meta.costCoins
+          };
+        })()
       }
     }));
     
@@ -161,11 +229,14 @@ export function GameProvider({ children }) {
       coins: won ? s.coins + meta.rewardCoins : s.coins,
       games: {
         ...s.games,
-        [id]: {
-          ...s.games[id],
-            players: Math.max(0, s.games[id].players - 1),
-            winners: won ? s.games[id].winners + 1 : s.games[id].winners
-        }
+        [id]: (() => {
+          const current = s.games[id] || defaultGameStats();
+          return {
+            ...current,
+            players: Math.max(0, (current.players || 0) - 1),
+            winners: won ? (current.winners || 0) + 1 : (current.winners || 0)
+          };
+        })()
       }
     }));
   }, [gamesList]);
@@ -180,8 +251,8 @@ export function GameProvider({ children }) {
     const cost = Math.min(10, 5 + Math.floor(sessionLength / 25));
     const reward = cost * 2 + Math.floor(Math.random() * 3);
     
-    const normalizedId = game.id.replace(/_/g, '-');
-    
+    const normalizedId = normalizeGameId(game.id);
+
     return {
       id: normalizedId,
       name: game.name,
@@ -206,7 +277,7 @@ export function GameProvider({ children }) {
         
         const newGames = gamesResponse.games
           .filter(g => {
-            const normalizedId = g.id.replace(/_/g, '-');
+            const normalizedId = normalizeGameId(g.id);
             const allowedGames = [
               'ball-bounce',
               'fruit-slice',
@@ -219,18 +290,25 @@ export function GameProvider({ children }) {
               'quiz-blitz',
               'color-match-tap',
               'sky-drop',
-              'shape-builder'
+              'shape-builder',
+              '2048-game'
             ];
             return allowedGames.includes(normalizedId);
           })
           .map(g => transformGameData(g));
         
-        setGamesList(prevGames => [...prevGames, ...newGames]);
+        setGamesList(prevGames => {
+          const nextList = mergeGameCollections(fallbackGames, prevGames, newGames);
+          // Register new games (duplicates are ignored by the registry map)
+          gameRegistry.batchRegister(nextList.map(g => g.id));
+          return nextList;
+        });
         
         setState(s => {
           const merged = { ...s.games };
           newGames.forEach(g => {
-            if (!merged[g.id]) merged[g.id] = defaultGameStats(g.base);
+            const id = normalizeGameId(g.id);
+            if (!merged[id]) merged[id] = defaultGameStats(g.base);
           });
           return { ...s, games: merged };
         });
@@ -273,7 +351,7 @@ export function GameProvider({ children }) {
           
           const transformed = gamesResponse.games
             .filter(g => {
-              const normalizedId = g.id.replace(/_/g, '-');
+              const normalizedId = normalizeGameId(g.id);
               const allowedGames = [
                 'ball-bounce',
                 'fruit-slice',
@@ -286,17 +364,23 @@ export function GameProvider({ children }) {
                 'quiz-blitz',
                 'color-match-tap',
                 'sky-drop',
-                'shape-builder'
+                'shape-builder',
+                '2048-game'
               ];
               return allowedGames.includes(normalizedId);
             })
             .map(g => transformGameData(g));
+
+          const mergedList = mergeGameCollections(fallbackGames, transformed);
+
+          setGamesList(mergedList);
           
-          setGamesList(transformed);
+          // Register games with the registry
+          gameRegistry.batchRegister(mergedList.map(g => g.id));
           
           setState(s => {
             const merged = { ...s.games };
-            transformed.forEach(g => {
+            mergedList.forEach(g => {
               if (!merged[g.id]) merged[g.id] = defaultGameStats(g.base);
             });
             return { ...s, games: merged };

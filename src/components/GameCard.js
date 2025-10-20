@@ -2,7 +2,7 @@ import { useGame } from '../context/GameContext';
 
 export default function GameCard({ game, onPlay }) {
   const { gameStats, likeGame, likedGames, coins } = useGame();
-  const stats = gameStats[game.id];
+  const stats = gameStats[game.id] || { likes: 0, plays: 0, winners: 0 };
   const canAfford = coins >= game.costCoins;
   const isLiked = likedGames.has(game.id);
   

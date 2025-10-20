@@ -329,6 +329,8 @@ html, body, #root, .app-root {
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none; /* Hide scrollbar for Firefox */
   -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+  touch-action: pan-y;
+  overscroll-behavior-y: contain;
 }
 
 .feed-container::-webkit-scrollbar {
@@ -395,6 +397,7 @@ html, body, #root, .app-root {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  touch-action: pan-y;
 }
 
 /* Larger screens */
@@ -433,6 +436,7 @@ html, body, #root, .app-root {
   transition: all 0.2s ease;
   border: none;
   box-sizing: border-box;
+  touch-action: pan-y;
 }
 
 /* Larger screens - maintain aspect ratio */

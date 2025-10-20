@@ -249,6 +249,7 @@ if (typeof window !== 'undefined') {
             'fruit-slice',
             'memory-flip',
             'stack-tower',
+            '2048-game',
             'dodge-game',
             'maze-escape',
             // '',
@@ -261,7 +262,7 @@ if (typeof window !== 'undefined') {
         ];
         
         gameRegistry.batchRegister(initialGames).then(() => {
-            gameRegistry.setPopularGames(['quick-tap', 'fruit-slice', 'ball-bounce']);
+            gameRegistry.setPopularGames(['quick-tap', 'fruit-slice', '2048-game']);
             
             gameRegistry.preloadPopularGames((loaded, total) => {
                 if (typeof window !== 'undefined') {

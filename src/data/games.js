@@ -11,6 +11,7 @@ const games = [
   { id: 'quiz-blitz', name: 'Quiz Blitz', costCoins: 5, rewardCoins: 11, preview: 'quiz-blitz.png' },
   { id: 'ball-bounce', name: 'Ball Bounce', costCoins: 5, rewardCoins: 11, preview: 'ball-bounce.png' },
   { id: 'dodge-game', name: 'Dodge Game', costCoins: 7, rewardCoins: 16, preview: 'dodge-game.png' },
+  { id: '2048-game', name: '2048', costCoins: 10, rewardCoins: 25, preview: '2048-game.png' },
   // { id: 'reaction-rush', name: 'Reaction Rush', costCoins: 5, rewardCoins: 12, preview: 'reaction-rush.png' },
   // { id: 'color-match', name: 'Color Match', costCoins: 6, rewardCoins: 14, preview: 'color-match.png' },
   // { id: 'shape-shift', name: 'Shape Shift', costCoins: 6, rewardCoins: 14, preview: 'shape-shift.png' },

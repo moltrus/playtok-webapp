@@ -49,3 +49,4 @@
 48,tap_stop,Tap Stop,Reflex,Rotating arrow; tap to stop inside green zone,Tap,30,Survive,3 misses ends run,+3 per hit,+5 for perfect center,
 49,memory_number,Memory Number,Memory,Show 3–5 digits briefly; tap them in correct order,Tap,40,Win,Complete all sequences before time ends,+5 per correct sequence,Digits flash 1s; difficulty increases,
 50,mirror_swipe,Mirror Swipe,Reflex,Arrow shown; swipe opposite direction,Swipe,30,Survive,Wrong swipe ends run,+1 per correct response,Speeds up every 5s,
+51,2048-game,2048,Puzzle,Slide tiles to combine numbers and reach 2048,Arrow keys or swipe,60,Win,Reach 2048 tile before time ends,+2 per merge; +100 for 2048 tile,Classic 2048 game logic,
