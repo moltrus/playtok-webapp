@@ -1,14 +1,37 @@
-import { useCallback, useState, useEffect, useRef } from 'react';
+import { useCallback, useState, useEffect, useRef, useMemo } from 'react';
 import GameCard from './GameCard';
 import { useGame } from '../context/GameContext';
 
+// Keep a trio of feed copies so we can jump between them for a seamless loop.
+const LOOP_MULTIPLIER = 3;
+
 export default function GameFeed({ onEnterGame }) {
   const { games } = useGame();
+  const gameCount = games?.length ?? 0;
   const [loading] = useState(false);
   const [error] = useState('');
   const [showSwipeHint, setShowSwipeHint] = useState(false);
   const inactivityTimerRef = useRef(null);
   const feedRef = useRef(null);
+  const isAdjustingRef = useRef(false);
+  const slideHeightRef = useRef(0);
+
+  const loopedGames = useMemo(() => {
+    if (!games || gameCount === 0) {
+      return [];
+    }
+
+    const clones = [];
+    for (let loopIndex = 0; loopIndex < LOOP_MULTIPLIER; loopIndex += 1) {
+      games.forEach((game, itemIndex) => {
+        clones.push({
+          game,
+          key: `${loopIndex}-${game.id}-${itemIndex}`
+        });
+      });
+    }
+    return clones;
+  }, [gameCount, games]);
 
   const resetInactivityTimer = useCallback(() => {
     setShowSwipeHint(false);
@@ -20,10 +43,74 @@ export default function GameFeed({ onEnterGame }) {
     }, 15000); // Show hint after 15 seconds
   }, []);
 
+  const updateSlideHeight = useCallback(() => {
+    const container = feedRef.current;
+    if (!container) {
+      return;
+    }
+    const firstSlide = container.querySelector('.feed-slide');
+    const measuredHeight = firstSlide?.getBoundingClientRect().height || container.getBoundingClientRect().height;
+    if (measuredHeight) {
+      slideHeightRef.current = measuredHeight;
+    }
+  }, []);
+
+  const ensureLoopPosition = useCallback(() => {
+    const container = feedRef.current;
+    if (!container || gameCount === 0) {
+      return;
+    }
+
+    const slideHeight = slideHeightRef.current || container.getBoundingClientRect().height;
+    if (!slideHeight) {
+      return;
+    }
+
+    const loopHeight = slideHeight * gameCount;
+    isAdjustingRef.current = true;
+    container.scrollTop = loopHeight;
+    requestAnimationFrame(() => {
+      isAdjustingRef.current = false;
+    });
+  }, [gameCount]);
+
+  const handleLoopingScroll = useCallback(() => {
+    const container = feedRef.current;
+    if (!container || gameCount === 0 || isAdjustingRef.current) {
+      return;
+    }
+
+    const slideHeight = slideHeightRef.current || container.getBoundingClientRect().height;
+    if (!slideHeight) {
+      return;
+    }
+
+    const loopHeight = slideHeight * gameCount;
+    const scrollTop = container.scrollTop;
+
+    if (scrollTop <= slideHeight) {
+      isAdjustingRef.current = true;
+      container.scrollTop = scrollTop + loopHeight;
+      requestAnimationFrame(() => {
+        isAdjustingRef.current = false;
+      });
+      return;
+    }
+
+    if (scrollTop >= loopHeight * 2) {
+      isAdjustingRef.current = true;
+      container.scrollTop = scrollTop - loopHeight;
+      requestAnimationFrame(() => {
+        isAdjustingRef.current = false;
+      });
+    }
+  }, [gameCount]);
+
   useEffect(() => {
     resetInactivityTimer();
 
     const handleScroll = () => {
+      handleLoopingScroll();
       resetInactivityTimer();
     };
 
@@ -33,8 +120,8 @@ export default function GameFeed({ onEnterGame }) {
 
     const feedElement = feedRef.current;
     if (feedElement) {
-      feedElement.addEventListener('scroll', handleScroll);
-      feedElement.addEventListener('touchstart', handleTouch);
+      feedElement.addEventListener('scroll', handleScroll, { passive: true });
+      feedElement.addEventListener('touchstart', handleTouch, { passive: true });
     }
 
     return () => {
@@ -46,7 +133,27 @@ export default function GameFeed({ onEnterGame }) {
         feedElement.removeEventListener('touchstart', handleTouch);
       }
     };
-  }, [resetInactivityTimer]);
+  }, [handleLoopingScroll, resetInactivityTimer]);
+
+  useEffect(() => {
+    if (gameCount === 0) {
+      return undefined;
+    }
+
+    updateSlideHeight();
+    const resizeHandler = () => updateSlideHeight();
+    window.addEventListener('resize', resizeHandler);
+
+    const rafId = requestAnimationFrame(() => {
+      updateSlideHeight();
+      ensureLoopPosition();
+    });
+
+    return () => {
+      window.removeEventListener('resize', resizeHandler);
+      cancelAnimationFrame(rafId);
+    };
+  }, [ensureLoopPosition, gameCount, updateSlideHeight]);
 
   const handlePlay = useCallback((id) => {
     onEnterGame(id);
@@ -126,9 +233,9 @@ export default function GameFeed({ onEnterGame }) {
 
   return (
     <div className="feed-container" ref={feedRef}>
-      {games.map(g => (
-        <section key={g.id} className="feed-slide">
-          <GameCard game={g} onPlay={handlePlay} />
+      {loopedGames.map(({ game, key }) => (
+        <section key={key} className="feed-slide">
+          <GameCard game={game} onPlay={handlePlay} />
         </section>
       ))}
       {showSwipeHint && (
