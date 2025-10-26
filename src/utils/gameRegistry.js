@@ -257,6 +257,7 @@ if (typeof window !== 'undefined') {
             'color-match-tap',
             'sky-drop',
             'shape-builder',
+            'bubble-shooter',
             // 'tap-dash',
             // 'balloon-pop-frenzy',
         ];

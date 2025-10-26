@@ -15,6 +15,7 @@ class GamePreloader {
             'dodge-game',
             'maze-escape',
             'bubble-pop',
+            'bubble-shooter',
             'quiz-blitz',
             'color-match-tap',
             'sky-drop',
@@ -125,6 +126,9 @@ class GamePreloader {
                     case 'bubble-pop':
                         const { BubblePopGame } = await import('../games/BubblePopGame.js');
                         return BubblePopGame;
+                    case 'bubble-shooter':
+                        const { BubbleShooterGame } = await import('../games/BubbleShooterGame.js');
+                        return BubbleShooterGame;
                     case 'quiz-blitz':
                         const { QuizBlitzGame } = await import('../games/QuizBlitzGame.js');
                         return QuizBlitzGame;
