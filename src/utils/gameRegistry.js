@@ -252,12 +252,12 @@ if (typeof window !== 'undefined') {
             '2048-game',
             'dodge-game',
             'maze-escape',
-            // '',
             'quiz-blitz',
             'color-match-tap',
             'sky-drop',
             'shape-builder',
             'bubble-shooter',
+            'puzzling-potions',
             // 'tap-dash',
             // 'balloon-pop-frenzy',
         ];

@@ -8,6 +8,7 @@ const games = [
   { id: 'stack-tower', name: 'Stack Tower', costCoins: 8, rewardCoins: 18, preview: 'stack-tower.png' },
   { id: 'bubble-pop', name: 'Bubble Pop', costCoins: 5, rewardCoins: 12, preview: 'bubble-pop.png' },
   { id: 'bubble-shooter', name: 'Bubble Shooter', costCoins: 7, rewardCoins: 18, preview: 'bubble-pop.png' },
+  { id: 'puzzling-potions', name: 'Puzzling Potions', costCoins: 8, rewardCoins: 20, preview: 'puzzling-potions.png' },
   { id: 'maze-escape', name: 'Maze Escape', costCoins: 9, rewardCoins: 20, preview: 'maze-escape.png' },
   { id: 'quiz-blitz', name: 'Quiz Blitz', costCoins: 5, rewardCoins: 11, preview: 'quiz-blitz.png' },
   { id: 'ball-bounce', name: 'Ball Bounce', costCoins: 5, rewardCoins: 11, preview: 'ball-bounce.png' },

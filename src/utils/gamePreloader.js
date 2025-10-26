@@ -20,6 +20,7 @@ class GamePreloader {
             'color-match-tap',
             'sky-drop',
             'shape-builder',
+            'puzzling-potions',
             // 'tap-dash',
             // 'balloon-pop-frenzy',
         ];
@@ -141,6 +142,9 @@ class GamePreloader {
                     case 'shape-builder':
                         const { ShapeBuilderGame } = await import('../games/ShapeBuilderGame.js');
                         return ShapeBuilderGame;
+                    case 'puzzling-potions':
+                        const { PuzzlingPotionsGame } = await import('../games/PuzzlingPotionsGame.js');
+                        return PuzzlingPotionsGame;
                     // case 'tap-dash':
                     //     const { TapDashGame } = await import('../games/TapDashGame.js');
                     //     return TapDashGame;

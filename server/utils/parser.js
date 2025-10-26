@@ -75,6 +75,7 @@ const parseGamesCsv = (csvString) => {
         'maze-escape',
         'bubble-pop',
         'bubble-shooter',
+        'puzzling-potions',
         'quiz-blitz',
         'color-match-tap',
         'sky-drop',
