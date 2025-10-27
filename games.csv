@@ -51,3 +51,4 @@
 50,mirror_swipe,Mirror Swipe,Reflex,Arrow shown; swipe opposite direction,Swipe,30,Survive,Wrong swipe ends run,+1 per correct response,Speeds up every 5s,
 51,2048-game,2048,Puzzle,Slide tiles to combine numbers and reach 2048,Arrow keys or swipe,60,Win,Reach 2048 tile before time ends,+2 per merge; +100 for 2048 tile,Classic 2048 game logic,
 52,puzzling-potions,Puzzling Potions,Puzzle,Swap adjacent potions to create matches,Drag (swap),60,Win,Reach target score before time ends,+10 per match; combo multiplier grows each cascade,Includes reshuffle when no moves remain,
+53,box_jump,Box Jump,Runner,Auto-runner with timed jumps,Tap / Space,35,Survive,Reach the finish line without hitting crates,+5 per crate cleared; +25 per level completed,Based on the Phaser Box Jump sample,

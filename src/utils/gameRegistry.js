@@ -258,6 +258,7 @@ if (typeof window !== 'undefined') {
             'shape-builder',
             'bubble-shooter',
             'puzzling-potions',
+            'box-jump',
             // 'tap-dash',
             // 'balloon-pop-frenzy',
         ];
